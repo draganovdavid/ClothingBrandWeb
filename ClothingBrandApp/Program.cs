@@ -2,7 +2,7 @@ using ClothingBrandApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ClothingBrandApp
+namespace ClothingBrand.Web
 {
     public class Program
     {

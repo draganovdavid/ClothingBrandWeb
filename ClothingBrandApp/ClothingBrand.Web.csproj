@@ -17,4 +17,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClothingBrand.Data\ClothingBrand.Data.csproj" />
+    <ProjectReference Include="..\ClothingBrand.Web.ViewModels\ClothingBrand.Web.ViewModels.csproj" />
+  </ItemGroup>
+
 </Project>

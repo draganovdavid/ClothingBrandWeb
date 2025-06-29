@@ -2,7 +2,7 @@ using System.Diagnostics;
 using ClothingBrandApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ClothingBrandApp.Controllers
+namespace ClothingBrand.Web.Controllers
 {
     public class HomeController : Controller
     {
