@@ -1,4 +1,6 @@
-﻿namespace ClothingBrand.Data.Models
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace ClothingBrand.Data.Models
 {
     public class Product
     {
@@ -10,6 +12,9 @@
         public string Size { get; set; } = null!;
         public string? ImageUrl { get; set; }
         public bool InStock { get; set; }
+
+        public string AuthorId { get; set; } = null!;
+        public virtual IdentityUser Author { get; set; } = null!;
 
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;

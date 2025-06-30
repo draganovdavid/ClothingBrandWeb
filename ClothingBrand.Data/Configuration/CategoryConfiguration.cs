@@ -15,8 +15,8 @@ namespace ClothingBrand.Data.Configuration
                 .Property(c => c.Name)
                 .IsRequired();
 
-            //entity
-            //    .HasData(this.CategoriesSeed());
+            entity
+                .HasData(this.CategoriesSeed());
         }
 
         private List<Category> CategoriesSeed()

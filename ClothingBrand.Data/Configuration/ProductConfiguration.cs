@@ -60,8 +60,8 @@ namespace ClothingBrand.Data.Configuration
                 .HasForeignKey(p => p.GenderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //entity
-            //    .HasData(this.SeedProducts());
+            entity
+                .HasData(this.SeedProducts());
         }
 
         private List<Product> SeedProducts()
@@ -77,6 +77,7 @@ namespace ClothingBrand.Data.Configuration
                     Size = "M",
                     ImageUrl = "https://example.com/images/nike-running-shorts.jpg",
                     InStock = true,
+                    AuthorId= "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
                     CategoryId = 1, // T-Shirts or Shorts – както си настроил
                     GenderId = 1,   // Men
                     IsDeleted = false
@@ -90,6 +91,7 @@ namespace ClothingBrand.Data.Configuration
                     Size = "L",
                     ImageUrl = "https://example.com/images/nike-club-shorts.jpg",
                     InStock = true,
+                    AuthorId= "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
                     CategoryId = 1,
                     GenderId = 2, // Women
                     IsDeleted = false
@@ -103,6 +105,7 @@ namespace ClothingBrand.Data.Configuration
                     Size = "S",
                     ImageUrl = "https://example.com/images/nike-drifit-shirt.jpg",
                     InStock = true,
+                    AuthorId= "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
                     CategoryId = 1,
                     GenderId = 1,
                     IsDeleted = false
@@ -116,6 +119,7 @@ namespace ClothingBrand.Data.Configuration
                     Size = "XL",
                     ImageUrl = "https://example.com/images/nike-airmax-tee.jpg",
                     InStock = true,
+                    AuthorId= "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
                     CategoryId = 1,
                     GenderId = 3, // Kids
                     IsDeleted = false
@@ -129,6 +133,7 @@ namespace ClothingBrand.Data.Configuration
                     Size = "M",
                     ImageUrl = "https://example.com/images/white-tshirt.jpg",
                     InStock = true,
+                    AuthorId= "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
                     CategoryId = 1,
                     GenderId = 1,
                     IsDeleted = false
@@ -142,6 +147,7 @@ namespace ClothingBrand.Data.Configuration
                     Size = "L",
                     ImageUrl = "https://example.com/images/jeans.jpg",
                     InStock = true,
+                    AuthorId= "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
                     CategoryId = 3,
                     GenderId = 2,
                     IsDeleted = false
