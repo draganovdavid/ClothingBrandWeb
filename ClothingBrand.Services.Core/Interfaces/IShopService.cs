@@ -1,8 +1,9 @@
-﻿namespace ClothingBrand.Services.Core.Interfaces
+﻿using ClothingBrandApp.Web.ViewModels.Product;
+
+namespace ClothingBrand.Services.Core.Interfaces
 {
     public interface IShopService
     {
-        // TODO:
-        //Task<IEnumerable<AllMoviesIndexViewModel>> GetAllProductsAsync();
+        Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync();
     }
 }

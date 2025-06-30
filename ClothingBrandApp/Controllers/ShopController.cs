@@ -1,12 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClothingBrand.Services.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ClothingBrand.Web.Controllers
 {
     public class ShopController : Controller
     {
-        public IActionResult Index()
+        private readonly IShopService shopService;
+
+        public ShopController(IShopService shopService)
         {
-            return View();
+            this.shopService = shopService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var products = await shopService
+                .GetAllProductsAsync();
+
+            return View(products);
         }
     }
 }
