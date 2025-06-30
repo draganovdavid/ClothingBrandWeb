@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36127.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrand.Web", "ClothingBrandApp\ClothingBrand.Web.csproj", "{0383FCCA-A8BE-4271-9A8A-DB7646760F6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrandApp.Web", "ClothingBrandApp\ClothingBrandApp.Web.csproj", "{0383FCCA-A8BE-4271-9A8A-DB7646760F6A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1392D5E2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{3136DAFB-A394-42B8-862B-9D24F687D031}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrand.Web.ViewModels", "ClothingBrand.Web.ViewModels\ClothingBrand.Web.ViewModels.csproj", "{37F3349D-62E7-4F67-A590-107493928EC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrandApp.Web.ViewModels", "ClothingBrand.Web.ViewModels\ClothingBrandApp.Web.ViewModels.csproj", "{37F3349D-62E7-4F67-A590-107493928EC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrand.GCommon", "ClothingBrandApp.GCommon\ClothingBrand.GCommon.csproj", "{C7947CE9-6960-404D-B19D-5FA8DF9F6B07}"
 EndProject
