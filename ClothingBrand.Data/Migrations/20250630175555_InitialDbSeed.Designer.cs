@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ClothingBrandApp.Data.Migrations
+namespace ClothingBrand.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250630120252_InitalDb")]
-    partial class InitalDb
+    [Migration("20250630175555_InitialDbSeed")]
+    partial class InitialDbSeed
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,6 +86,28 @@ namespace ClothingBrandApp.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "T-Shirts"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Hoodies"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Jeans"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Jackets"
+                        });
                 });
 
             modelBuilder.Entity("ClothingBrand.Data.Models.Gender", b =>
@@ -103,6 +125,23 @@ namespace ClothingBrandApp.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Men"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Women"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Kids"
+                        });
                 });
 
             modelBuilder.Entity("ClothingBrand.Data.Models.Product", b =>
@@ -110,6 +149,10 @@ namespace ClothingBrandApp.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -147,11 +190,99 @@ namespace ClothingBrandApp.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthorId");
+
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("GenderId");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("b7a1c162-1cfe-4d87-9916-2d9e373fda17"),
+                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                            CategoryId = 1,
+                            Description = "Леки и дишащи къси гащи, подходящи за спорт и ежедневие.",
+                            GenderId = 1,
+                            ImageUrl = "https://example.com/images/nike-running-shorts.jpg",
+                            InStock = true,
+                            IsDeleted = false,
+                            Name = "Nike Dri-FIT Running Shorts",
+                            Price = 39.99m,
+                            Size = "M"
+                        },
+                        new
+                        {
+                            Id = new Guid("7a93cc29-89b8-4fb5-8714-9be26f71f611"),
+                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                            CategoryId = 1,
+                            Description = "Памучни къси гащи за всекидневен комфорт с лого на Nike.",
+                            GenderId = 2,
+                            ImageUrl = "https://example.com/images/nike-club-shorts.jpg",
+                            InStock = true,
+                            IsDeleted = false,
+                            Name = "Nike Sportswear Club Shorts",
+                            Price = 34.90m,
+                            Size = "L"
+                        },
+                        new
+                        {
+                            Id = new Guid("fdd9c18d-1a2d-452b-b504-e0d5f5c20f14"),
+                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                            CategoryId = 1,
+                            Description = "Спортна тениска с къс ръкав, изработена от влагоотвеждаща материя.",
+                            GenderId = 1,
+                            ImageUrl = "https://example.com/images/nike-drifit-shirt.jpg",
+                            InStock = true,
+                            IsDeleted = false,
+                            Name = "Nike Dri-FIT Legend T-Shirt",
+                            Price = 29.99m,
+                            Size = "S"
+                        },
+                        new
+                        {
+                            Id = new Guid("2f1c64b0-9c9d-44d2-8124-3e8bd6f3d319"),
+                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                            CategoryId = 1,
+                            Description = "Мека тениска с класически дизайн и принт на Air Max.",
+                            GenderId = 3,
+                            ImageUrl = "https://example.com/images/nike-airmax-tee.jpg",
+                            InStock = true,
+                            IsDeleted = false,
+                            Name = "Nike Air Max Graphic Tee",
+                            Price = 24.90m,
+                            Size = "XL"
+                        },
+                        new
+                        {
+                            Id = new Guid("a3d610c8-7e7c-4d7b-b2c4-150ad277d310"),
+                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                            CategoryId = 1,
+                            Description = "Comfortable 100% cotton T-shirt.",
+                            GenderId = 1,
+                            ImageUrl = "https://example.com/images/white-tshirt.jpg",
+                            InStock = true,
+                            IsDeleted = false,
+                            Name = "Basic White T-Shirt",
+                            Price = 19.99m,
+                            Size = "M"
+                        },
+                        new
+                        {
+                            Id = new Guid("d3a7a590-0873-4760-97c9-bbf7b2750116"),
+                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                            CategoryId = 3,
+                            Description = "Comfortable 100% cotton T-shirt.",
+                            GenderId = 2,
+                            ImageUrl = "https://example.com/images/jeans.jpg",
+                            InStock = true,
+                            IsDeleted = false,
+                            Name = "Basic Black T-Shirt",
+                            Price = 19.99m,
+                            Size = "L"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -269,6 +400,24 @@ namespace ClothingBrandApp.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "2ff7b062-aa49-42f9-b386-7f8491261943",
+                            Email = "admin@recipesharing.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@RECIPESHARING.COM",
+                            NormalizedUserName = "ADMIN@RECIPESHARING.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEL9k2iLUviHYI/qu+kkem2RaUYXlWzxzYG3HriTJtF9zC+Miqb4gkBQqvCFUR0aR+w==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "81970a81-ad26-470a-8886-443af07f0a03",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@recipesharing.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -396,6 +545,12 @@ namespace ClothingBrandApp.Data.Migrations
 
             modelBuilder.Entity("ClothingBrand.Data.Models.Product", b =>
                 {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ClothingBrand.Data.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
@@ -407,6 +562,8 @@ namespace ClothingBrandApp.Data.Migrations
                         .HasForeignKey("GenderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Author");
 
                     b.Navigation("Category");
 
