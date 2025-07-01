@@ -16,7 +16,9 @@ namespace ClothingBrand.Services.Core
 
         public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync()
         {
-            return await dbContext.Products
+            return await dbContext
+                .Products
+                .AsNoTracking()
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.Category)
                 .Select(p => new ProductIndexViewModel
