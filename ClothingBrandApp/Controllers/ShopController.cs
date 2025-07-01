@@ -1,4 +1,5 @@
 ﻿using ClothingBrand.Services.Core.Interfaces;
+using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClothingBrand.Web.Controllers
@@ -18,6 +19,30 @@ namespace ClothingBrand.Web.Controllers
                 .GetAllProductsAsync();
 
             return View(products);
+        }
+
+        public async Task<IActionResult> Details(string? id)
+        {
+            try
+            {
+                ProductDetailsViewModel? movieDetails = await this.shopService
+                    .GetProductDetailsByIdAsync(id);
+                if (movieDetails == null)
+                {
+                    // TODO: Custom 404 page
+                    return this.RedirectToAction(nameof(Index));
+                }
+
+                return this.View(movieDetails);
+            }
+            catch (Exception e)
+            {
+                // TODO: Implement it with the ILogger
+                // TODO: Add JS bars to indicate such errors
+                Console.WriteLine(e.Message);
+
+                return this.RedirectToAction(nameof(Index));
+            }
         }
     }
 }

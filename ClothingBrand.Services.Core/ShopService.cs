@@ -32,5 +32,30 @@ namespace ClothingBrand.Services.Core
                 })
                 .ToListAsync();
         }
+
+        public async Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(string? id)
+        {
+            if (!Guid.TryParse(id, out Guid productId))
+                return null;
+
+            return await dbContext.Products
+                .AsNoTracking()
+                .Where(p => p.Id == productId)
+                .Include(p => p.Category)
+                .Include(p => p.Gender)
+                .Select(p => new ProductDetailsViewModel
+                {
+                    Id = p.Id.ToString(),
+                    Name = p.Name,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Size = p.Size,
+                    ImageUrl = p.ImageUrl,
+                    InStock = p.InStock,
+                    CategoryName = p.Category.Name,
+                    GenderName = p.Gender.Name
+                })
+                .SingleOrDefaultAsync();
+        }
     }
 }

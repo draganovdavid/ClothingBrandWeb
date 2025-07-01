@@ -1,0 +1,159 @@
+﻿@using ClothingBrandApp.Web.ViewModels.Product
+@model ProductDetailsViewModel
+
+@{
+	ViewData["Title"] = "Product Details";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+	.product-details-img {
+		width: 100%;
+		max-height: 500px;
+		object-fit: contain;
+		background: #f8f9fa;
+		border-radius: 1rem;
+		box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+	}
+
+	.product-price {
+		font-size: 2rem;
+		color: #ff9800;
+		font-weight: bold;
+		margin-bottom: 0.5rem;
+	}
+
+	.badge-instock {
+		background: #28a745;
+		color: #fff;
+		font-size: 1rem;
+		margin-right: 0.5rem;
+	}
+
+	.badge-outstock {
+		background: #dc3545;
+		color: #fff;
+		font-size: 1rem;
+		margin-right: 0.5rem;
+	}
+
+	.details-action-btn {
+		min-width: 160px;
+		font-size: 1.1rem;
+	}
+
+	.favorite-btn {
+		background: none;
+		border: none;
+		color: #e74c3c;
+		font-size: 1.7rem;
+		margin-left: 1rem;
+		transition: color 0.2s;
+	}
+
+		.favorite-btn:hover {
+			color: #c0392b;
+		}
+
+	.product-meta {
+		font-size: 1.1rem;
+		color: #fff;
+	}
+
+	.category-highlight {
+		color: white;
+		font-weight: bold;
+	}
+
+	.gender-highlight {
+		color: white;
+		font-weight: bold;
+	}
+
+	.btn-back-bright {
+		background: #fff !important;
+		color: #222 !important;
+		border: 2px solid #fff !important;
+		font-weight: bold;
+		transition: background 0.2s, color 0.2s;
+	}
+
+		.btn-back-bright:hover {
+			background: #f1f1f1 !important;
+			color: #111 !important;
+			border: 2px solid #f1f1f1 !important;
+		}
+</style>
+
+<div class="container py-5">
+	<div class="row g-5">
+		<div class="col-md-6">
+			<img src="@(string.IsNullOrEmpty(Model.ImageUrl) ? Url.Content("~/images/default-image.jpg") : Model.ImageUrl)"
+				 class="product-details-img"
+				 alt="@Model.Name" />
+		</div>
+		<div class="col-md-6 d-flex flex-column">
+			<h1 class="fw-bold mb-3">@Model.Name</h1>
+			<div class="mb-2">
+				<span class="badge @(Model.InStock ? "badge-instock" : "badge-outstock")">
+					<i class="fas @(Model.InStock ? "fa-check-circle" : "fa-times-circle")"></i>
+					@(Model.InStock ? "In Stock" : "Out of Stock")
+				</span>
+				<span class="product-meta">
+					Category: <span class="category-highlight">@Model.CategoryName</span>
+				</span>
+				@if (!string.IsNullOrEmpty(Model.GenderName))
+				{
+					var genderColor = Model.GenderName switch
+					{
+						"Men" => "lightblue",
+						"Women" => "pink",
+						"Kids" => "white",
+						_ => "white"
+					};
+					<span class="product-meta ms-3">
+						For: <span class="gender-highlight" style="color:@genderColor">@Model.GenderName</span>
+					</span>
+				}
+			</div>
+			<div class="product-price mb-3">@Model.Price.ToString("C")</div>
+			@if (!string.IsNullOrEmpty(Model.Size))
+			{
+				<div class="mb-3 product-meta">Size: <strong>@Model.Size</strong></div>
+			}
+			<div class="mb-4">
+				<h5 class="fw-semibold">Description</h5>
+				<p>@Model.Description</p>
+			</div>
+			<div class="d-flex align-items-center gap-2 mt-auto">
+				<form asp-controller="Cart" asp-action="Add" method="post" class="me-2">
+					<input type="hidden" name="productId" value="@Model.Id" />
+					<button type="submit" class="btn btn-dark details-action-btn" @(Model.InStock ? "" : "disabled")>
+						<i class="fas fa-shopping-cart"></i> Add to Cart
+					</button>
+				</form>
+				<form asp-controller="Favorites" asp-action="Add" method="post">
+					<input type="hidden" name="productId" value="@Model.Id" />
+					<button type="submit" class="favorite-btn" title="Add to Favorites">
+						<i class="far fa-heart"></i>
+					</button>
+				</form>
+			</div>
+			<div class="mt-4">
+				<a asp-action="Index" asp-controller="Shop" class="btn btn-back-bright rounded-pill px-4 fw-bold">
+					<i class="fas fa-arrow-left"></i> Back to Shop
+				</a>
+				@if (User.Identity?.IsAuthenticated ?? false)
+				{
+					<a asp-controller="Shop" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info rounded-pill px-4 fw-bold text-white ms-2">
+						<i class="fas fa-pen"></i> Edit
+					</a>
+					<a asp-controller="Shop" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger rounded-pill px-4 fw-bold text-white ms-2">
+						<i class="fas fa-trash"></i> Delete
+					</a>
+				}
+			</div>
+		</div>
+	</div>
+</div>
