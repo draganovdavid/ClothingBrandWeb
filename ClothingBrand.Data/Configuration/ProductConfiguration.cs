@@ -1,4 +1,5 @@
 ﻿using ClothingBrand.Data.Models;
+using static ClothingBrand.Data.Common.EntityConstants.Product;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,18 +13,21 @@ namespace ClothingBrand.Data.Configuration
             entity
                 .HasKey(p => p.Id);
 
-            // Required fields
+            // Required fields with length constraints from EntityConstants
             entity
                 .Property(p => p.Name)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(NameMaxLength);
 
             entity
                 .Property(p => p.Description)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(DescriptionMaxLength);
 
             entity
                 .Property(p => p.Size)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(SizeMaxLength);
 
             entity
                 .Property(p => p.InStock)
@@ -37,7 +41,7 @@ namespace ClothingBrand.Data.Configuration
             // Optional image
             entity
                 .Property(p => p.ImageUrl)
-                .HasMaxLength(2048);
+                .HasMaxLength(ImageUrlMaxLength);
 
             // Soft delete
             entity

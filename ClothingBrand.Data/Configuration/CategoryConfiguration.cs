@@ -1,6 +1,7 @@
 ﻿using ClothingBrand.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using static ClothingBrand.Data.Common.EntityConstants.Category;
 
 namespace ClothingBrand.Data.Configuration
 {
@@ -13,7 +14,8 @@ namespace ClothingBrand.Data.Configuration
 
             entity
                 .Property(c => c.Name)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(CategoryMaxLength);
 
             entity
                 .HasData(this.CategoriesSeed());
