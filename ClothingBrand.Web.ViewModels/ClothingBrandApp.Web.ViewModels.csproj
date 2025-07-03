@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClothingBrand.Common\ClothingBrand.Data.Common.csproj" />
+    <ProjectReference Include="..\ClothingBrandApp.GCommon\ClothingBrand.GCommon.csproj" />
+  </ItemGroup>
+
 </Project>
