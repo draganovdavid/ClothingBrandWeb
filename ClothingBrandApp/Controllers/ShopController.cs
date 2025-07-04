@@ -212,5 +212,32 @@ namespace ClothingBrand.Web.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Favorites()
+        {
+            try
+            {
+                string userId = this.GetUserId()!;
+
+                IEnumerable<ProductIndexViewModel>? favProducts = await this.shopService.
+                    GetUserFavoriteProductsAsync(userId);
+
+                if (favProducts == null)
+                {
+                    return this.RedirectToAction(nameof(Index));
+                }
+
+                return this.View(favProducts);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+
+                return this.RedirectToAction(nameof(Index));
+            }
+        }
+
+
     }
 }

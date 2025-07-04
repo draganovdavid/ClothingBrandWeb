@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClothingBrandApp.Web.ViewModels.Product
+﻿namespace ClothingBrandApp.Web.ViewModels.Product
 {
     public class ProductIndexViewModel
     {

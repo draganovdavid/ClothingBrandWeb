@@ -17,5 +17,7 @@ namespace ClothingBrand.Services.Core.Interfaces
         Task<ProductDeleteInputModel?> GetProductForDeleteAsync(Guid? productId);
 
         Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel);
+
+        Task<IEnumerable<ProductIndexViewModel>?> GetUserFavoriteProductsAsync(string userId);
     }
 }

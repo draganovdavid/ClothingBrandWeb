@@ -190,5 +190,32 @@ namespace ClothingBrand.Services.Core
 
             return false;
         }
+
+        public async Task<IEnumerable<ProductIndexViewModel>?> GetUserFavoriteProductsAsync(string userId)
+        {
+            IEnumerable<ProductIndexViewModel>? favProducts = null;
+
+            IdentityUser? user = await this.userManager
+                .FindByIdAsync(userId);
+            
+            if (user != null)
+            {
+                favProducts = await this.dbContext
+                    .ApplicationUserProducts
+                    .Include(aup => aup.Product)
+                    .ThenInclude(p => p.Category)
+                    .Where(aup => aup.ApplicationUserId.ToLower() == userId.ToLower())
+                    .Select(aup => new ProductIndexViewModel()
+                    {
+                        Id = aup.ProductId,
+                        Name = aup.Product.Name, 
+                        ImageUrl = aup.Product.ImageUrl,
+                        CategoryName = aup.Product.Category.Name
+                    })
+                    .ToArrayAsync();
+            }
+
+            return favProducts;
+        }
     }
 }
