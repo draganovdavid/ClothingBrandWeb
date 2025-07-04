@@ -72,7 +72,9 @@ namespace ClothingBrand.Services.Core
         public async Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(string? id)
         {
             if (!Guid.TryParse(id, out Guid productId))
-                return null;
+            {  
+                return null; 
+            }
 
             return await this.dbContext.Products
                 .AsNoTracking()
@@ -119,12 +121,10 @@ namespace ClothingBrand.Services.Core
 
         public async Task<bool> EditProductAsync(string userId, ProductFormInputModel inputModel)
         {
-            IdentityUser? user = await userManager
-                .FindByIdAsync(userId);
-
-            Guid productId;
-            if (!Guid.TryParse(inputModel.Id, out productId))
+            if (!Guid.TryParse(inputModel.Id, out Guid productId))
+            {
                 return false;
+            }
             Product? updatedProduct = await this.dbContext.Products
                 .FindAsync(productId);
 
@@ -133,7 +133,7 @@ namespace ClothingBrand.Services.Core
             Gender? gender = await this.dbContext.Genders
                 .FirstOrDefaultAsync(g => g.Name.ToLower() == inputModel.Gender.ToLower());
 
-            if (user != null && updatedProduct != null && category != null && gender != null && inputModel.Price.HasValue)
+            if (userId != null && updatedProduct != null && category != null && gender != null && inputModel.Price.HasValue)
             {
                 updatedProduct.Name = inputModel.Name;
                 updatedProduct.Price = inputModel.Price.Value;
@@ -145,6 +145,46 @@ namespace ClothingBrand.Services.Core
                 updatedProduct.InStock = inputModel.InStock;
 
                 await this.dbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<ProductDeleteInputModel?> GetProductForDeleteAsync(Guid? productId)
+        {
+            ProductDeleteInputModel? deleteModel = null;
+
+            if (productId != null)
+            {
+                Product? deleteProductModel = await this.dbContext.Products
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(p => p.Id == productId);
+
+                if (deleteProductModel != null)
+                {
+                    deleteModel = new ProductDeleteInputModel()
+                    {
+                        Id = deleteProductModel.Id,
+                        Name = deleteProductModel.Name,
+                        ImageUrl = deleteProductModel.ImageUrl,
+                    };
+                }
+            }
+
+            return deleteModel;
+        }
+
+        public async Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel)
+        {
+            Product? deletedProduct = await this.dbContext.Products
+                .FindAsync(inputModel.Id);
+
+            if (deletedProduct != null)
+            {
+                deletedProduct.IsDeleted = true;
+                await this.dbContext.SaveChangesAsync();
+
                 return true;
             }
 

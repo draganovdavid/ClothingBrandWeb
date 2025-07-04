@@ -1,12 +1,13 @@
-﻿@using static ClothingBrandApp.GCommon.ApplicationConstants;
-@model ClothingBrandApp.Web.ViewModels.Product.ProductFormInputModel
+﻿@model ClothingBrandApp.Web.ViewModels.Product.ProductFormInputModel
 
 @{
     ViewData["Title"] = "Edit Product";
+    // Define possible sizes. Adjust as needed for your app.
+    var sizes = new List<string> { "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL" };
 }
 
 <div class="container mt-5">
-    <h2 class="text-center text-warning fw-bold">Add a New Product</h2>
+    <h2 class="text-center text-warning fw-bold">Edit Product</h2>
     <hr class="mb-4">
 
     <div class="row justify-content-center">
@@ -40,7 +41,13 @@
 
                 <div class="mb-3">
                     <label asp-for="Size" class="form-label fw-bold">Size</label>
-                    <input asp-for="Size" class="form-control" placeholder="Enter size" autocomplete="off">
+                    <select asp-for="Size" class="form-control">
+                        <option value="">-- Select Size --</option>
+                        @foreach (var size in sizes)
+                        {
+                            <option value="@size" selected="@(Model.Size == size ? "selected" : null)">@size</option>
+                        }
+                    </select>
                     <span asp-validation-for="Size" class="text-danger"></span>
                 </div>
 
@@ -76,8 +83,10 @@
                     <button type="submit" class="btn btn-success fw-bold px-4">
                         <i class="bi bi-plus-circle"></i> Save Changes
                     </button>
-                    <a asp-action="Index" class="btn btn-outline-light ms-2">
-                        <i class="bi bi-arrow-left"></i> Back to Shop
+                    <a asp-action="Details"
+                       asp-route-id="@Model!.Id"
+                       class="btn btn-outline-light ms-2">
+                        <i class="bi bi-arrow-left"></i> Back to Product
                     </a>
                 </div>
             </form>

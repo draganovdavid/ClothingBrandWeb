@@ -13,5 +13,9 @@ namespace ClothingBrand.Services.Core.Interfaces
         Task<ProductFormInputModel?> GetProductForEditingAsync(Guid? productId);
 
         Task<bool> EditProductAsync(string userId, ProductFormInputModel inputModel);
+
+        Task<ProductDeleteInputModel?> GetProductForDeleteAsync(Guid? productId);
+
+        Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel);
     }
 }
