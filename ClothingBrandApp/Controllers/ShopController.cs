@@ -2,8 +2,6 @@
 using ClothingBrandApp.Web.Controllers;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Product;
 
 namespace ClothingBrand.Web.Controllers
@@ -53,14 +51,15 @@ namespace ClothingBrand.Web.Controllers
             {
                 if (!this.ModelState.IsValid)
                 {
-                    return this.RedirectToAction(nameof(Create));
+                    return this.View(inputModel);
                 }
 
-                bool createResult = await this.shopService
+                bool addResult = await this.shopService
                     .AddProductAsync(this.GetUserId()!, inputModel);
-                if (createResult == false)
+                if (addResult == false)
                 {
-                    return this.RedirectToAction(nameof(Create));
+                    this.ModelState.AddModelError(string.Empty, ServiceCreateErrorMessage);
+                    return this.View(inputModel);
                 }
                 return this.RedirectToAction(nameof(Index));
             }
@@ -96,5 +95,62 @@ namespace ClothingBrand.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid? id)
+        {
+            try
+            {
+                ProductFormInputModel? editInputModel = await this.shopService
+                    .GetProductForEditingAsync(id);
+                if (editInputModel == null)
+                {
+                    // TODO: Custom 404 page
+                    return this.RedirectToAction(nameof(Index));
+                }
+
+                editInputModel.Categories = await this.categoryService
+                    .GetAllCategoriesDropDownAsync();
+
+                return this.View(editInputModel);
+            }
+            catch (Exception e)
+            {
+                // TODO: Implement it with the ILogger
+                // TODO: Add JS bars to indicate such errors
+                Console.WriteLine(e.Message);
+
+                return this.RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ProductFormInputModel inputModel)
+        {
+            try
+            {
+                if (!this.ModelState.IsValid)
+                {
+                    return this.View(inputModel);
+                }
+
+                bool editResult = await this.shopService
+                    .EditProductAsync(this.GetUserId()!, inputModel);
+                if (!editResult)
+                {
+                    this.ModelState.AddModelError(string.Empty, ServiceCreateErrorMessage);
+                    return this.View(inputModel);
+                }
+
+                return this.RedirectToAction(nameof(Details), new { id = inputModel.Id });
+            }
+            catch (Exception e)
+            {
+                // TODO: Implement it with the ILogger
+                // TODO: Add JS bars to indicate such errors
+                Console.WriteLine(e.Message);
+
+                return this.RedirectToAction(nameof(Index));
+            }
+        }
     }
 }

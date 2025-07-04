@@ -2,9 +2,7 @@
 @model ClothingBrandApp.Web.ViewModels.Product.ProductFormInputModel
 
 @{
-    ViewData["Title"] = "Add New Product";
-    // Define possible sizes. Adjust as needed for your app.
-    var sizes = new List<string> { "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL" };
+    ViewData["Title"] = "Edit Product";
 }
 
 <div class="container mt-5">
@@ -13,8 +11,8 @@
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form asp-controller="Shop" asp-action="Add" method="post" class="bg-dark text-light p-4 rounded shadow-lg">
-                
+            <form asp-controller="Shop" asp-action="Edit" method="post" class="bg-dark text-light p-4 rounded shadow-lg">
+
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label fw-bold">Product Name</label>
                     <input asp-for="Name" class="form-control" placeholder="Enter product name" autocomplete="off">
@@ -24,7 +22,7 @@
                 <div class="mb-3">
                     <label asp-for="CategoryId" class="form-label fw-bold">Category</label>
                     <select asp-for="CategoryId" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))">
-                        <option value="">-- Select Category --</option>
+                        <option value="">...</option>
                     </select>
                     <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
@@ -42,13 +40,7 @@
 
                 <div class="mb-3">
                     <label asp-for="Size" class="form-label fw-bold">Size</label>
-                    <select asp-for="Size" class="form-control">
-                        <option value="">-- Select Size --</option>
-                        @foreach (var size in sizes)
-                        {
-                            <option value="@size" selected="@(Model.Size == size ? "selected" : null)">@size</option>
-                        }
-                    </select>
+                    <input asp-for="Size" class="form-control" placeholder="Enter size" autocomplete="off">
                     <span asp-validation-for="Size" class="text-danger"></span>
                 </div>
 
@@ -68,7 +60,9 @@
                     <label asp-for="InStock" class="form-label fw-bold">In Stock</label>
                     <div class="form-check form-switch">
                         <input asp-for="InStock" class="form-check-input" type="checkbox" role="switch" id="inStockSwitch">
-                        
+                        <label class="form-check-label" for="inStockSwitch">
+                            @(Model?.InStock == true ? "Yes" : "No")
+                        </label>
                     </div>
                     <span asp-validation-for="InStock" class="text-danger"></span>
                 </div>
@@ -80,7 +74,7 @@
 
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success fw-bold px-4">
-                        <i class="bi bi-plus-circle"></i> Add Product
+                        <i class="bi bi-plus-circle"></i> Save Changes
                     </button>
                     <a asp-action="Index" class="btn btn-outline-light ms-2">
                         <i class="bi bi-arrow-left"></i> Back to Shop

@@ -10,5 +10,8 @@ namespace ClothingBrand.Services.Core.Interfaces
 
         Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(string? id);
 
+        Task<ProductFormInputModel?> GetProductForEditingAsync(Guid? productId);
+
+        Task<bool> EditProductAsync(string userId, ProductFormInputModel inputModel);
     }
 }

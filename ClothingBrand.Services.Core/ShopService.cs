@@ -4,7 +4,6 @@ using ClothingBrandApp.Data;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace ClothingBrand.Services.Core
 {
@@ -24,7 +23,6 @@ namespace ClothingBrand.Services.Core
             return await dbContext
                 .Products
                 .AsNoTracking()
-                .Include(p => p.Category)
                 .Select(p => new ProductIndexViewModel
                 {
                     Id = p.Id,
@@ -39,26 +37,15 @@ namespace ClothingBrand.Services.Core
 
         public async Task<bool> AddProductAsync(string userId, ProductFormInputModel inputModel)
         {
-            bool result = false;
-            IdentityUser? user = await this.userManager.FindByIdAsync(userId);
-            Category? categoryRef = await this.dbContext.Categories
-                .AsNoTracking()
+            IdentityUser? user = await userManager.FindByIdAsync(userId);
+            Category? category = await this.dbContext.Categories
                 .FirstOrDefaultAsync(c => c.Id == inputModel.CategoryId);
+            Gender? gender = await this.dbContext.Genders
+                .FirstOrDefaultAsync(g => g.Name.ToLower() == inputModel.Gender.ToLower());
 
-            int genderId = 0;
-            if (!string.IsNullOrWhiteSpace(inputModel.Gender))
+            if (user != null && category != null && gender != null && inputModel.Price.HasValue)
             {
-                var gender = dbContext.Genders
-                    .AsNoTracking()
-                    .FirstOrDefault(g => g.Name.ToLower() == inputModel.Gender.ToLower());
-
-                genderId = gender?.Id ?? 0;
-            }
-
-
-            if (user != null && categoryRef != null && genderId != 0 && inputModel.Price.HasValue)
-            {
-                Product product = new Product()
+                var product = new Product
                 {
                     Id = Guid.NewGuid(),
                     Name = inputModel.Name,
@@ -68,18 +55,18 @@ namespace ClothingBrand.Services.Core
                     ImageUrl = inputModel.ImageUrl,
                     InStock = inputModel.InStock,
                     AuthorId = user.Id,
-                    CategoryId = categoryRef.Id,
-                    GenderId = genderId,
+                    CategoryId = category.Id,
+                    GenderId = gender.Id,
                     IsDeleted = false
                 };
 
                 await this.dbContext.Products.AddAsync(product);
                 await this.dbContext.SaveChangesAsync();
 
-                result = true;
+                return true;
             }
 
-            return result;
+            return false;
         }
 
         public async Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(string? id)
@@ -87,7 +74,7 @@ namespace ClothingBrand.Services.Core
             if (!Guid.TryParse(id, out Guid productId))
                 return null;
 
-            return await dbContext.Products
+            return await this.dbContext.Products
                 .AsNoTracking()
                 .Where(p => p.Id == productId)
                 .Include(p => p.Category)
@@ -105,6 +92,63 @@ namespace ClothingBrand.Services.Core
                     GenderName = p.Gender.Name
                 })
                 .SingleOrDefaultAsync();
+        }
+
+        public async Task<ProductFormInputModel?> GetProductForEditingAsync(Guid? productId)
+        {
+            if (productId == null)
+                return null;
+
+            return await this.dbContext.Products
+                .AsNoTracking()
+                .Where(p => p.Id == productId)
+                .Select(p => new ProductFormInputModel
+                {
+                    Id = p.Id.ToString(),
+                    Name = p.Name,
+                    Price = p.Price,
+                    CategoryId = p.CategoryId,
+                    Gender = p.Gender.Name,
+                    Size = p.Size,
+                    Description = p.Description,
+                    ImageUrl = p.ImageUrl,
+                    InStock = p.InStock
+                })
+                .SingleOrDefaultAsync();
+        }
+
+        public async Task<bool> EditProductAsync(string userId, ProductFormInputModel inputModel)
+        {
+            IdentityUser? user = await userManager
+                .FindByIdAsync(userId);
+
+            Guid productId;
+            if (!Guid.TryParse(inputModel.Id, out productId))
+                return false;
+            Product? updatedProduct = await this.dbContext.Products
+                .FindAsync(productId);
+
+            Category? category = await this.dbContext.Categories
+                .FirstOrDefaultAsync(c => c.Id == inputModel.CategoryId);
+            Gender? gender = await this.dbContext.Genders
+                .FirstOrDefaultAsync(g => g.Name.ToLower() == inputModel.Gender.ToLower());
+
+            if (user != null && updatedProduct != null && category != null && gender != null && inputModel.Price.HasValue)
+            {
+                updatedProduct.Name = inputModel.Name;
+                updatedProduct.Price = inputModel.Price.Value;
+                updatedProduct.Description = inputModel.Description;
+                updatedProduct.Size = inputModel.Size;
+                updatedProduct.CategoryId = category.Id;
+                updatedProduct.GenderId = gender.Id;
+                updatedProduct.ImageUrl = inputModel.ImageUrl;
+                updatedProduct.InStock = inputModel.InStock;
+
+                await this.dbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
     }
 }
