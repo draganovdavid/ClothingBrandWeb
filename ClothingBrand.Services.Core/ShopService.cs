@@ -28,9 +28,7 @@ namespace ClothingBrand.Services.Core
                     Id = p.Id,
                     Name = p.Name,
                     ImageUrl = p.ImageUrl,
-                    CategoryName = p.Category.Name,
-                    Price = p.Price,
-                    InStock = p.InStock
+                    Price = p.Price
                 })
                 .ToListAsync();
         }
@@ -69,21 +67,16 @@ namespace ClothingBrand.Services.Core
             return false;
         }
 
-        public async Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(string? id)
+        public async Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(Guid? id)
         {
-            if (!Guid.TryParse(id, out Guid productId))
-            {  
-                return null; 
-            }
-
             return await this.dbContext.Products
                 .AsNoTracking()
-                .Where(p => p.Id == productId)
+                .Where(p => p.Id == id)
                 .Include(p => p.Category)
                 .Include(p => p.Gender)
                 .Select(p => new ProductDetailsViewModel
                 {
-                    Id = p.Id.ToString(),
+                    Id = p.Id,
                     Name = p.Name,
                     Description = p.Description,
                     Price = p.Price,
@@ -91,7 +84,7 @@ namespace ClothingBrand.Services.Core
                     ImageUrl = p.ImageUrl,
                     InStock = p.InStock,
                     CategoryName = p.Category.Name,
-                    GenderName = p.Gender.Name
+                    GenderName = p.Gender.Name,
                 })
                 .SingleOrDefaultAsync();
         }
@@ -191,31 +184,5 @@ namespace ClothingBrand.Services.Core
             return false;
         }
 
-        public async Task<IEnumerable<ProductIndexViewModel>?> GetUserFavoriteProductsAsync(string userId)
-        {
-            IEnumerable<ProductIndexViewModel>? favProducts = null;
-
-            IdentityUser? user = await this.userManager
-                .FindByIdAsync(userId);
-            
-            if (user != null)
-            {
-                favProducts = await this.dbContext
-                    .ApplicationUserProducts
-                    .Include(aup => aup.Product)
-                    .ThenInclude(p => p.Category)
-                    .Where(aup => aup.ApplicationUserId.ToLower() == userId.ToLower())
-                    .Select(aup => new ProductIndexViewModel()
-                    {
-                        Id = aup.ProductId,
-                        Name = aup.Product.Name, 
-                        ImageUrl = aup.Product.ImageUrl,
-                        CategoryName = aup.Product.Category.Name
-                    })
-                    .ToArrayAsync();
-            }
-
-            return favProducts;
-        }
     }
 }

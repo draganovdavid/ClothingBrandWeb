@@ -8,7 +8,7 @@ namespace ClothingBrand.Services.Core.Interfaces
 
         Task<bool> AddProductAsync(string userId, ProductFormInputModel inputModel);
 
-        Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(string? id);
+        Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(Guid? id);
 
         Task<ProductFormInputModel?> GetProductForEditingAsync(Guid? productId);
 
@@ -18,6 +18,5 @@ namespace ClothingBrand.Services.Core.Interfaces
 
         Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel);
 
-        Task<IEnumerable<ProductIndexViewModel>?> GetUserFavoriteProductsAsync(string userId);
     }
 }

@@ -68,6 +68,37 @@
     }
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function() {
+      $('.favorite-link').closest('form').on('submit', function(e) {
+        e.preventDefault(); // stop normal form submit
+
+        var $form = $(this);
+        var url = $form.attr('action');
+        var data = $form.serialize();
+
+        $.post(url, data)
+          .done(function() {
+            // Toggle heart icon fill on success
+            var $icon = $form.find('i.far, i.fas');
+            if ($icon.hasClass('far')) {
+              $icon.removeClass('far').addClass('fas');
+              $form.attr('action', '/Favorite/Delete'); // switch to remove action
+              $form.find('button').attr('title', 'Remove from Favorites');
+            } else {
+              $icon.removeClass('fas').addClass('far');
+              $form.attr('action', '/Favorite/Add'); // switch to add action
+              $form.find('button').attr('title', 'Add to Favorites');
+            }
+          })
+          .fail(function() {
+            alert('Error updating favorites.');
+          });
+      });
+    });
+</script>
+
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold">@ViewData["Title"]</h2>
@@ -104,9 +135,24 @@
                             </form>
                             @if (User?.Identity?.IsAuthenticated == true)
                             {
-                                <a asp-controller="Favorites" asp-action="Add" asp-route-productId="@product.Id" class="favorite-link" title="Add to Favorites">
-                                    <i class="far fa-heart"></i>
-                                </a>
+                                if (product.IsFavorite)
+                                {
+                                    <form asp-controller="Favorite" asp-action="Delete" method="post" class="m-0 p-0">
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <button type="submit" class="favorite-link" title="Remove from Favorites">
+                                            <i class="fas fa-heart"></i>
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Favorite" asp-action="Add" method="post" class="m-0 p-0">
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <button type="submit" class="favorite-link" title="Add to Favorites">
+                                            <i class="far fa-heart"></i>
+                                        </button>
+                                    </form>
+                                }
                             }
                         </div>
                     </div>

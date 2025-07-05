@@ -135,12 +135,24 @@
 				</form>
 				@if (User.Identity?.IsAuthenticated ?? false)
 				{
-					<form asp-controller="Favorites" asp-action="Add" method="post">
-						<input type="hidden" name="productId" value="@Model.Id" />
-						<button type="submit" class="favorite-btn" title="Add to Favorites">
-							<i class="far fa-heart"></i>
-						</button>
-					</form>
+					if (Model.IsFavorite)
+					{
+						<form asp-controller="Favorite" asp-action="Delete" method="post" class="m-0 p-0">
+							<input type="hidden" name="productId" value="@Model.Id" />
+							<button type="submit" class="favorite-btn" title="Remove from Favorites">
+								<i class="fas fa-heart"></i>
+							</button>
+						</form>
+					}
+					else
+					{
+						<form asp-controller="Favorite" asp-action="Add" method="post" class="m-0 p-0">
+							<input type="hidden" name="productId" value="@Model.Id" />
+							<button type="submit" class="favorite-btn" title="Add to Favorites">
+								<i class="far fa-heart"></i>
+							</button>
+						</form>
+					}
 				}
 			</div>
 			<div class="mt-4">

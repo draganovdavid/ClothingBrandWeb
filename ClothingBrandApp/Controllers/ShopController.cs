@@ -2,9 +2,7 @@
 using ClothingBrandApp.Web.Controllers;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
-using System.Numerics;
 using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Product;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ClothingBrand.Web.Controllers
 {
@@ -12,20 +10,30 @@ namespace ClothingBrand.Web.Controllers
     {
         private readonly IShopService shopService;
         private readonly ICategoryService categoryService;
+        private readonly IFavoriteService favoriteService;
 
-        public ShopController(IShopService shopService, ICategoryService categoryService)
+        public ShopController(IShopService shopService,
+            ICategoryService categoryService, IFavoriteService favoriteService)
         {
             this.shopService = shopService;
             this.categoryService = categoryService;
+            this.favoriteService = favoriteService;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var products = await shopService
+            IEnumerable<ProductIndexViewModel> allProducts = await shopService
                 .GetAllProductsAsync();
-
-            return View(products);
+            if (this.IsUserAuthenticated())
+            {
+                foreach (ProductIndexViewModel productIndexVM in allProducts)
+                {
+                    productIndexVM.IsFavorite = await this.favoriteService
+                        .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId());
+                }
+            }
+            return View(allProducts);
         }
 
         [HttpGet]
@@ -73,12 +81,18 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details(string? id)
+        public async Task<IActionResult> Details(Guid? id)
         {
             try
             {
                 ProductDetailsViewModel? movieDetails = await this.shopService
                     .GetProductDetailsByIdAsync(id);
+                if (this.IsUserAuthenticated() && movieDetails != null)
+                {
+                    movieDetails.IsFavorite = await this.favoriteService
+                            .IsProductAddedToFavorites(movieDetails.Id, this.GetUserId());
+                    
+                }
                 if (movieDetails == null)
                 {
                     // TODO: Custom 404 page
@@ -212,32 +226,6 @@ namespace ClothingBrand.Web.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
         }
-
-        [HttpGet]
-        public async Task<IActionResult> Favorites()
-        {
-            try
-            {
-                string userId = this.GetUserId()!;
-
-                IEnumerable<ProductIndexViewModel>? favProducts = await this.shopService.
-                    GetUserFavoriteProductsAsync(userId);
-
-                if (favProducts == null)
-                {
-                    return this.RedirectToAction(nameof(Index));
-                }
-
-                return this.View(favProducts);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
 
     }
 }
