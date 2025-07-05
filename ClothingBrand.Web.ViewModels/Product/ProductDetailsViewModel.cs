@@ -2,7 +2,7 @@
 {
     public class ProductDetailsViewModel
     {
-        public string Id { get; set; } = null!;
+        public Guid Id { get; set; }
         public string Name { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal Price { get; set; }
@@ -11,5 +11,6 @@
         public bool InStock { get; set; }
         public string CategoryName { get; set; } = null!;
         public string GenderName { get; set; } = null!;
+        public bool IsFavorite { get; set; }
     }
 }
