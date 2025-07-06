@@ -105,7 +105,7 @@
         {
             <div class="col-12 mt-5">
                 <div class="alert alert-warning text-center w-100">
-                    <strong>No favorite products found!</strong> Please check back later or add new products.
+                    <strong>No favorite products found!</strong>
                 </div>
             </div>
         }
@@ -130,12 +130,24 @@
                                 @product.Price.ToString("C")
                             </span>
                             <div class="add-to-cart-fav-row">
-                                <form asp-controller="Cart" asp-action="Add" method="post" class="flex-grow-1">
-                                    <input type="hidden" name="productId" value="@product.Id" />
-                                    <button type="submit" class="btn btn-outline-dark add-to-cart-btn">
-                                        <i class="fas fa-shopping-cart"></i> Add to Cart
-                                    </button>
-                                </form>
+                                @if (product.IsInShoppingCart)
+                                {
+                                    <form asp-controller="ShoppingCart" asp-action="Index" method="get" class="flex-grow-1">
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <button class="btn btn-success add-to-cart-btn">
+                                            <i class="fas fa-check"></i> Added to Cart
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="ShoppingCart" asp-action="Add" method="post" class="flex-grow-1">
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <button type="submit" class="btn btn-outline-dark add-to-cart-btn" @(product.InStock ? "" : "disabled")>
+                                            <i class="fas fa-shopping-cart"></i> Add to Cart
+                                        </button>
+                                    </form>
+                                }
                                 @if (User?.Identity?.IsAuthenticated == true)
                                 {
                                     if (product.IsFavorite)

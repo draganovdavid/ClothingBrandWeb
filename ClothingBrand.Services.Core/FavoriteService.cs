@@ -30,16 +30,14 @@ namespace ClothingBrand.Services.Core
             {
                 favProducts = await this.dbContext
                     .ApplicationUserProducts
-                    .Include(aup => aup.Product)
-                    .ThenInclude(p => p.Category)
                     .AsNoTracking()
-                    .Where(aup => aup.ApplicationUserId.ToLower() == userId.ToLower())
+                    .Where(aup => aup.ApplicationUserId == userId)
                     .Select(aup => new ProductIndexViewModel()
                     {
                         Id = aup.ProductId,
                         Name = aup.Product.Name,
                         Price = aup.Product.Price,
-                        ImageUrl = aup.Product.ImageUrl,
+                        ImageUrl = aup.Product.ImageUrl
                     })
                     .ToArrayAsync();
             }
@@ -47,31 +45,35 @@ namespace ClothingBrand.Services.Core
             return favProducts;
         }
 
-        public async Task AddProductToUserFavoritesAsync(Guid? productId, string userId)
+        public async Task<bool> AddProductToUserFavoritesAsync(Guid? productId, string userId)
         {
             if (productId != null)
             {
                 var entry = await this.dbContext.ApplicationUserProducts
                     .IgnoreQueryFilters()
-                    .SingleOrDefaultAsync(x => x.ApplicationUserId == userId && x.ProductId == productId);
+                    .SingleOrDefaultAsync(aup => aup.ApplicationUserId == userId && aup.ProductId == productId);
 
                 if (entry != null)
                 {
                     entry.IsDeleted = false;
-                    dbContext.Update(entry);
+                    this.dbContext.Update(entry);
                 }
                 else
                 {
-                    await dbContext.ApplicationUserProducts.AddAsync(new ApplicationUserProduct
+                    await this.dbContext.ApplicationUserProducts.AddAsync(new ApplicationUserProduct
                     {
                         ApplicationUserId = userId,
                         ProductId = productId.Value
                     });
                 }
 
-                await dbContext.SaveChangesAsync();
+                await this.dbContext.SaveChangesAsync();
+                return true;
             }
+
+            return false;
         }
+
 
         public async Task<bool> DeleteProductFromUserFavoritesAsync(Guid? productId, string? userId)
         {
@@ -79,6 +81,7 @@ namespace ClothingBrand.Services.Core
             {
                 ApplicationUserProduct? userProductEntry = await this.dbContext
                     .ApplicationUserProducts
+                    .IgnoreQueryFilters()
                     .SingleOrDefaultAsync(upe => upe.ApplicationUserId == userId
                         && upe.ProductId == productId);
 
@@ -95,7 +98,7 @@ namespace ClothingBrand.Services.Core
             return false;
         }
 
-        public async Task<bool> IsProductAddedToFavorites(Guid? productId, string? userId)
+        public async Task<bool> IsProductAddedToFavorites(Guid? productId, string userId)
         {
             if (productId != null && userId != null)
             {

@@ -7,9 +7,11 @@ namespace ClothingBrandApp.Web.Controllers
     public class FavoriteController : BaseController
     {
         private readonly IFavoriteService favoriteService;
-        public FavoriteController(IFavoriteService favoriteService) 
+        private readonly IShoppingCartService shoppingCartService;
+        public FavoriteController(IFavoriteService favoriteService, IShoppingCartService shoppingCartService) 
         {
             this.favoriteService = favoriteService;
+            this.shoppingCartService = shoppingCartService;
         }
 
         [HttpGet]
@@ -30,7 +32,9 @@ namespace ClothingBrandApp.Web.Controllers
                     foreach (ProductIndexViewModel productIndexVM in userFavProducts)
                     {
                         productIndexVM.IsFavorite = await this.favoriteService
-                            .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId());
+                            .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId()!);
+                        productIndexVM.IsInShoppingCart = await this.shoppingCartService
+                            .IsProductAddedToShoppingCart(productIndexVM.Id, this.GetUserId()!);
                     }
                 }
                 return this.View(userFavProducts);
@@ -54,8 +58,13 @@ namespace ClothingBrandApp.Web.Controllers
                     return this.Forbid();
                 }
 
-                await this.favoriteService
+                bool result = await this.favoriteService
                     .AddProductToUserFavoritesAsync(productId, userId);
+                if (result == false)
+                {
+                    // TODO: Add JS notifications
+                    return this.RedirectToAction(nameof(Index), "Shop");
+                }
 
                 return this.RedirectToAction(nameof(Index));
             }
