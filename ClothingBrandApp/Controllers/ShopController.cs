@@ -1,4 +1,5 @@
-﻿using ClothingBrand.Services.Core.Interfaces;
+﻿using ClothingBrand.Services.Core;
+using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.Controllers;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,15 @@ namespace ClothingBrand.Web.Controllers
         private readonly IShopService shopService;
         private readonly ICategoryService categoryService;
         private readonly IFavoriteService favoriteService;
+        private readonly IShoppingCartService shoppingCartService;
 
         public ShopController(IShopService shopService,
-            ICategoryService categoryService, IFavoriteService favoriteService)
+            ICategoryService categoryService, IFavoriteService favoriteService, IShoppingCartService shoppingCartService)
         {
             this.shopService = shopService;
             this.categoryService = categoryService;
             this.favoriteService = favoriteService;
+            this.shoppingCartService = shoppingCartService;        
         }
 
         [HttpGet]
@@ -30,7 +33,9 @@ namespace ClothingBrand.Web.Controllers
                 foreach (ProductIndexViewModel productIndexVM in allProducts)
                 {
                     productIndexVM.IsFavorite = await this.favoriteService
-                        .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId());
+                        .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId()!);
+                    productIndexVM.IsInShoppingCart = await this.shoppingCartService
+                        .IsProductAddedToShoppingCart(productIndexVM.Id, this.GetUserId()!);
                 }
             }
             return View(allProducts);
@@ -90,8 +95,10 @@ namespace ClothingBrand.Web.Controllers
                 if (this.IsUserAuthenticated() && movieDetails != null)
                 {
                     movieDetails.IsFavorite = await this.favoriteService
-                            .IsProductAddedToFavorites(movieDetails.Id, this.GetUserId());
-                    
+                            .IsProductAddedToFavorites(movieDetails.Id, this.GetUserId()!);
+                    movieDetails.IsInShoppingCart = await this.shoppingCartService
+                        .IsProductAddedToShoppingCart(movieDetails.Id, this.GetUserId()!);
+
                 }
                 if (movieDetails == null)
                 {

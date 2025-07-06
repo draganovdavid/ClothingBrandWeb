@@ -127,12 +127,24 @@
 				<p>@Model.Description</p>
 			</div>
 			<div class="d-flex align-items-center gap-2 mt-auto">
-				<form asp-controller="ShoppingCart" asp-action="Add" method="post" class="me-2">
-					<input type="hidden" name="productId" value="@Model.Id" />
-					<button type="submit" class="btn btn-dark details-action-btn" @(Model.InStock ? "" : "disabled")>
-						<i class="fas fa-shopping-cart"></i> Add to Cart
-					</button>
-				</form>
+				@if (Model.IsInShoppingCart)
+				{
+					<form asp-controller="ShoppingCart" asp-action="Index" method="get">
+						<button class="btn btn-success add-to-cart-btn">
+							<i class="fas fa-check"></i> Added to Cart
+						</button>
+					</form>
+				}
+				else
+				{
+					<form asp-controller="ShoppingCart" asp-action="Add" method="post">
+						<input type="hidden" name="productId" value="@Model.Id" />
+						<button type="submit" class="btn btn-dark details-action-btn" @(Model.InStock ? "" : "disabled")>
+							<i class="fas fa-shopping-cart"></i> Add to Cart
+						</button>
+					</form>
+				}
+
 				@if (User.Identity?.IsAuthenticated ?? false)
 				{
 					if (Model.IsFavorite)
@@ -155,6 +167,7 @@
 					}
 				}
 			</div>
+
 			<div class="mt-4">
 				<a asp-action="Index" asp-controller="Shop" class="btn btn-back-bright rounded-pill px-4 fw-bold">
 					<i class="fas fa-arrow-left"></i> Back to Shop

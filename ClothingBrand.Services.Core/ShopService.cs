@@ -28,7 +28,8 @@ namespace ClothingBrand.Services.Core
                     Id = p.Id,
                     Name = p.Name,
                     ImageUrl = p.ImageUrl,
-                    Price = p.Price
+                    Price = p.Price,
+                    InStock = p.InStock
                 })
                 .ToListAsync();
         }
