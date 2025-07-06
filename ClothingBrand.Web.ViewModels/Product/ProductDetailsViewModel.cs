@@ -11,6 +11,8 @@
         public bool InStock { get; set; }
         public string CategoryName { get; set; } = null!;
         public string GenderName { get; set; } = null!;
+
+        public bool IsInShoppingCart { get; set; }
         public bool IsFavorite { get; set; }
     }
 }

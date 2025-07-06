@@ -7,7 +7,8 @@
         public string? ImageUrl { get; set; }
         public decimal Price { get; set; }
 
-        // Used for the favorite heart icon in the view
+        public bool InStock { get; set; }
+        public bool IsInShoppingCart { get; set; }
         public bool IsFavorite { get; set; }
     }
 }
