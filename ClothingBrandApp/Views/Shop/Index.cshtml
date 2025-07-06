@@ -72,7 +72,7 @@
 <script>
     $(function() {
       $('.favorite-link').closest('form').on('submit', function(e) {
-        e.preventDefault(); // stop normal form submit
+        e.preventDefault();
 
         var $form = $(this);
         var url = $form.attr('action');
@@ -80,15 +80,14 @@
 
         $.post(url, data)
           .done(function() {
-            // Toggle heart icon fill on success
             var $icon = $form.find('i.far, i.fas');
             if ($icon.hasClass('far')) {
               $icon.removeClass('far').addClass('fas');
-              $form.attr('action', '/Favorite/Delete'); // switch to remove action
+              $form.attr('action', '/Favorite/Delete');
               $form.find('button').attr('title', 'Remove from Favorites');
             } else {
               $icon.removeClass('fas').addClass('far');
-              $form.attr('action', '/Favorite/Add'); // switch to add action
+              $form.attr('action', '/Favorite/Add');
               $form.find('button').attr('title', 'Add to Favorites');
             }
           })
@@ -127,7 +126,7 @@
                         </a>
                         <span class="fw-bold text-dark mt-2 mb-2" style="font-size:1.2rem;">@product.Price.ToString("C")</span>
                         <div class="add-to-cart-fav-row">
-                            <form asp-controller="Cart" asp-action="Add" method="post" class="flex-grow-1">
+                            <form asp-controller="ShoppingCart" asp-action="Add" method="post" class="flex-grow-1">
                                 <input type="hidden" name="productId" value="@product.Id" />
                                 <button type="submit" class="btn btn-outline-dark add-to-cart-btn">
                                     <i class="fas fa-shopping-cart"></i> Add to Cart

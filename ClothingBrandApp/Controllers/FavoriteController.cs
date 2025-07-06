@@ -57,7 +57,7 @@ namespace ClothingBrandApp.Web.Controllers
                 await this.favoriteService
                     .AddProductToUserFavoritesAsync(productId, userId);
 
-                return this.RedirectToAction(nameof(Index), "Shop");
+                return this.RedirectToAction(nameof(Index));
             }
             catch (Exception e)
             {

@@ -32,11 +32,13 @@ namespace ClothingBrand.Services.Core
                     .ApplicationUserProducts
                     .Include(aup => aup.Product)
                     .ThenInclude(p => p.Category)
+                    .AsNoTracking()
                     .Where(aup => aup.ApplicationUserId.ToLower() == userId.ToLower())
                     .Select(aup => new ProductIndexViewModel()
                     {
                         Id = aup.ProductId,
                         Name = aup.Product.Name,
+                        Price = aup.Product.Price,
                         ImageUrl = aup.Product.ImageUrl,
                     })
                     .ToArrayAsync();
