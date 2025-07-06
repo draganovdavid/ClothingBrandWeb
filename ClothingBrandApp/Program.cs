@@ -41,6 +41,7 @@ namespace ClothingBrandApp.Web
             builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IFavoriteService, FavoriteService>();
+            builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 
             builder.Services.AddControllersWithViews();
 
