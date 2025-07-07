@@ -234,5 +234,61 @@ namespace ClothingBrand.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> MenCollection()
+        {
+            const string  genderName = "Men";
+            IEnumerable<ProductIndexViewModel> allProducts = await shopService
+                .GetProductsByGenderAsync(genderName);
+            if (this.IsUserAuthenticated())
+            {
+                foreach (ProductIndexViewModel productIndexVM in allProducts)
+                {
+                    productIndexVM.IsFavorite = await this.favoriteService
+                        .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId()!);
+                    productIndexVM.IsInShoppingCart = await this.shoppingCartService
+                        .IsProductAddedToShoppingCart(productIndexVM.Id, this.GetUserId()!);
+                }
+            }
+            return View(allProducts);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> WomenCollection()
+        {
+            const string genderName = "Women";
+            IEnumerable<ProductIndexViewModel> allProducts = await shopService
+                .GetProductsByGenderAsync(genderName);
+            if (this.IsUserAuthenticated())
+            {
+                foreach (ProductIndexViewModel productIndexVM in allProducts)
+                {
+                    productIndexVM.IsFavorite = await this.favoriteService
+                        .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId()!);
+                    productIndexVM.IsInShoppingCart = await this.shoppingCartService
+                        .IsProductAddedToShoppingCart(productIndexVM.Id, this.GetUserId()!);
+                }
+            }
+            return View(allProducts);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> KidsCollection()
+        {
+            const string genderName = "Kids";
+            IEnumerable<ProductIndexViewModel> allProducts = await shopService
+                .GetProductsByGenderAsync(genderName);
+            if (this.IsUserAuthenticated())
+            {
+                foreach (ProductIndexViewModel productIndexVM in allProducts)
+                {
+                    productIndexVM.IsFavorite = await this.favoriteService
+                        .IsProductAddedToFavorites(productIndexVM.Id, this.GetUserId()!);
+                    productIndexVM.IsInShoppingCart = await this.shoppingCartService
+                        .IsProductAddedToShoppingCart(productIndexVM.Id, this.GetUserId()!);
+                }
+            }
+            return View(allProducts);
+        }
     }
 }

@@ -185,5 +185,23 @@ namespace ClothingBrand.Services.Core
             return false;
         }
 
+
+        public async Task<IEnumerable<ProductIndexViewModel>> GetProductsByGenderAsync(string genderName)
+        {
+            var allProductsForMen = await this.dbContext.Products
+                .AsNoTracking()
+                .Where(p => p.Gender.Name == genderName)
+                .Select(p => new ProductIndexViewModel()
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    ImageUrl = p.ImageUrl,
+                    Price = p.Price,
+                    InStock = p.InStock
+                })
+                .ToListAsync();
+
+            return allProductsForMen;
+        }
     }
 }

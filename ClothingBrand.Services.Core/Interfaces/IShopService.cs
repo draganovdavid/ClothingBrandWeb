@@ -18,5 +18,8 @@ namespace ClothingBrand.Services.Core.Interfaces
 
         Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel);
 
+
+        Task<IEnumerable<ProductIndexViewModel>> GetProductsByGenderAsync(string genderName);
+
     }
 }
