@@ -6,7 +6,7 @@ namespace ClothingBrand.Services.Core.Interfaces
     {
         Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync();
 
-        Task<bool> AddProductAsync(string userId, ProductFormInputModel inputModel);
+        Task AddProductAsync(string userId, ProductFormInputModel inputModel);
 
         Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(Guid? id);
 

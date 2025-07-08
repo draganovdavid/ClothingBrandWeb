@@ -1,6 +1,6 @@
 ﻿using ClothingBrand.Data.Models;
+using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
-using ClothingBrandApp.Data;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,21 +9,23 @@ namespace ClothingBrand.Services.Core
 {
     public class ShopService : IShopService
     {
-        private readonly ApplicationDbContext dbContext;
+        private readonly IShopRepository shopRepository;
+        private readonly ICategoryRepository categoryRepository;
         private readonly UserManager<IdentityUser> userManager;
 
-        public ShopService(ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
+        public ShopService(IShopRepository shopRepository, ICategoryRepository categoryRepository, UserManager<IdentityUser> userManager)
         {
-            this.dbContext = dbContext;
+            this.shopRepository = shopRepository;
             this.userManager = userManager;
+            this.categoryRepository = categoryRepository;
         }
 
         public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync()
         {
-            return await dbContext
-                .Products
+            IEnumerable<ProductIndexViewModel> allProducts = await this.shopRepository
+                .GetAllAttached()
                 .AsNoTracking()
-                .Select(p => new ProductIndexViewModel
+                .Select(p => new ProductIndexViewModel()
                 {
                     Id = p.Id,
                     Name = p.Name,
@@ -32,19 +34,29 @@ namespace ClothingBrand.Services.Core
                     InStock = p.InStock
                 })
                 .ToListAsync();
+
+            // TODO: Add noImage if the image is null
+            //foreach (ProductIndexViewModel movie in allProducts)
+            //{
+            //    if (String.IsNullOrEmpty(movie.ImageUrl))
+            //    {
+            //        movie.ImageUrl = $"/images/{NoImageUrl}";
+            //    }
+            //}
+
+            return allProducts;
         }
 
-        public async Task<bool> AddProductAsync(string userId, ProductFormInputModel inputModel)
+        public async Task AddProductAsync(string userId, ProductFormInputModel inputModel)
         {
             IdentityUser? user = await userManager.FindByIdAsync(userId);
-            Category? category = await this.dbContext.Categories
+            Category? category = await this.categoryRepository
                 .FirstOrDefaultAsync(c => c.Id == inputModel.CategoryId);
-            Gender? gender = await this.dbContext.Genders
-                .FirstOrDefaultAsync(g => g.Name.ToLower() == inputModel.Gender.ToLower());
+            int genderId = GetGenderId(inputModel.Gender);
 
-            if (user != null && category != null && gender != null && inputModel.Price.HasValue)
+            if (user != null && category != null && genderId != 0 && inputModel.Price.HasValue)
             {
-                var product = new Product
+                var newProduct = new Product
                 {
                     Id = Guid.NewGuid(),
                     Name = inputModel.Name,
@@ -55,26 +67,20 @@ namespace ClothingBrand.Services.Core
                     InStock = inputModel.InStock,
                     AuthorId = user.Id,
                     CategoryId = category.Id,
-                    GenderId = gender.Id,
+                    GenderId = genderId,
                     IsDeleted = false
                 };
 
-                await this.dbContext.Products.AddAsync(product);
-                await this.dbContext.SaveChangesAsync();
-
-                return true;
+                await this.shopRepository.AddAsync(newProduct);
             }
-
-            return false;
         }
 
         public async Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(Guid? id)
         {
-            return await this.dbContext.Products
+            return await this.shopRepository
+                .GetAllAttached()
                 .AsNoTracking()
                 .Where(p => p.Id == id)
-                .Include(p => p.Category)
-                .Include(p => p.Gender)
                 .Select(p => new ProductDetailsViewModel
                 {
                     Id = p.Id,
@@ -93,9 +99,12 @@ namespace ClothingBrand.Services.Core
         public async Task<ProductFormInputModel?> GetProductForEditingAsync(Guid? productId)
         {
             if (productId == null)
+            {
                 return null;
+            }
 
-            return await this.dbContext.Products
+            return await this.shopRepository
+                .GetAllAttached()
                 .AsNoTracking()
                 .Where(p => p.Id == productId)
                 .Select(p => new ProductFormInputModel
@@ -115,34 +124,34 @@ namespace ClothingBrand.Services.Core
 
         public async Task<bool> EditProductAsync(string userId, ProductFormInputModel inputModel)
         {
-            if (!Guid.TryParse(inputModel.Id, out Guid productId))
+            bool result = false;
+            if (!Guid.TryParse(inputModel.Id, out var productId) || !inputModel.Price.HasValue)
+            {
+                return result;
+            }
+            Product? editableProduct = await this.shopRepository
+                .GetByIdAsync(productId);
+            Category? category = await this.categoryRepository
+                .GetByIdAsync(inputModel.CategoryId);
+            int genderId = GetGenderId(inputModel.Gender);
+
+            if (editableProduct == null || category == null || genderId == 0)
             {
                 return false;
             }
-            Product? updatedProduct = await this.dbContext.Products
-                .FindAsync(productId);
 
-            Category? category = await this.dbContext.Categories
-                .FirstOrDefaultAsync(c => c.Id == inputModel.CategoryId);
-            Gender? gender = await this.dbContext.Genders
-                .FirstOrDefaultAsync(g => g.Name.ToLower() == inputModel.Gender.ToLower());
+            editableProduct.Name = inputModel.Name;
+            editableProduct.Price = inputModel.Price.Value;
+            editableProduct.Description = inputModel.Description;
+            editableProduct.Size = inputModel.Size;
+            editableProduct.ImageUrl = inputModel.ImageUrl;
+            editableProduct.InStock = inputModel.InStock;
+            editableProduct.CategoryId = category.Id;
+            editableProduct.GenderId = genderId;
 
-            if (userId != null && updatedProduct != null && category != null && gender != null && inputModel.Price.HasValue)
-            {
-                updatedProduct.Name = inputModel.Name;
-                updatedProduct.Price = inputModel.Price.Value;
-                updatedProduct.Description = inputModel.Description;
-                updatedProduct.Size = inputModel.Size;
-                updatedProduct.CategoryId = category.Id;
-                updatedProduct.GenderId = gender.Id;
-                updatedProduct.ImageUrl = inputModel.ImageUrl;
-                updatedProduct.InStock = inputModel.InStock;
+            result = await this.shopRepository.UpdateAsync(editableProduct);
 
-                await this.dbContext.SaveChangesAsync();
-                return true;
-            }
-
-            return false;
+            return result;
         }
 
         public async Task<ProductDeleteInputModel?> GetProductForDeleteAsync(Guid? productId)
@@ -151,7 +160,8 @@ namespace ClothingBrand.Services.Core
 
             if (productId != null)
             {
-                Product? deleteProductModel = await this.dbContext.Products
+                Product? deleteProductModel = await this.shopRepository
+                    .GetAllAttached()
                     .AsNoTracking()
                     .SingleOrDefaultAsync(p => p.Id == productId);
 
@@ -171,24 +181,27 @@ namespace ClothingBrand.Services.Core
 
         public async Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel)
         {
-            Product? deletedProduct = await this.dbContext.Products
-                .FindAsync(inputModel.Id);
+            bool result = false;
+            Product? deletedProduct = await this.shopRepository
+                .GetByIdAsync(inputModel.Id);
 
-            if (deletedProduct != null)
+            if (deletedProduct == null)
             {
-                deletedProduct.IsDeleted = true;
-                await this.dbContext.SaveChangesAsync();
-
-                return true;
+                return result;
             }
 
-            return false;
+            // Soft Delete <=> Edit of IsDeleted property
+            result = await this.shopRepository.DeleteAsync(deletedProduct);
+
+            return result;
         }
 
 
+        // Extended mehods
         public async Task<IEnumerable<ProductIndexViewModel>> GetProductsByGenderAsync(string genderName)
         {
-            var allProductsForMen = await this.dbContext.Products
+            var allProductsForMen = await this.shopRepository
+                .GetAllAttached()
                 .AsNoTracking()
                 .Where(p => p.Gender.Name == genderName)
                 .Select(p => new ProductIndexViewModel()
@@ -203,5 +216,17 @@ namespace ClothingBrand.Services.Core
 
             return allProductsForMen;
         }
+
+        private int GetGenderId(string genderName)
+        {
+            return genderName switch
+            {
+                "Men" => 1,
+                "Women" => 2,
+                "Kids" => 3,
+                _ => 0
+            };
+        }
+
     }
 }

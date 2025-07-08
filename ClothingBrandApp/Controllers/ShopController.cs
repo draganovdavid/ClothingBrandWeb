@@ -62,20 +62,15 @@ namespace ClothingBrand.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Add(ProductFormInputModel inputModel)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return this.View(inputModel);
+            }
+
             try
             {
-                if (!this.ModelState.IsValid)
-                {
-                    return this.View(inputModel);
-                }
+                await this.shopService.AddProductAsync(this.GetUserId()!, inputModel);
 
-                bool addResult = await this.shopService
-                    .AddProductAsync(this.GetUserId()!, inputModel);
-                if (addResult == false)
-                {
-                    this.ModelState.AddModelError(string.Empty, ServiceCreateErrorMessage);
-                    return this.View(inputModel);
-                }
                 return this.RedirectToAction(nameof(Index));
             }
             catch (Exception e)
