@@ -1,6 +1,6 @@
 ﻿using ClothingBrand.Data.Models;
+using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
-using ClothingBrandApp.Data;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,79 +9,69 @@ namespace ClothingBrand.Services.Core
 {
     public class FavoriteService : IFavoriteService
     {
-        private readonly ApplicationDbContext dbContext;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly IFavoriteRepository favoriteRepository;
 
-        public FavoriteService(ApplicationDbContext dbContext,
-            UserManager<IdentityUser> userManager)
+        public FavoriteService(IFavoriteRepository favoriteRepository)
         {
-            this.dbContext = dbContext;
-            this.userManager = userManager;
+            this.favoriteRepository = favoriteRepository;
         }
 
         public async Task<IEnumerable<ProductIndexViewModel>?> GetUserFavoriteProductsAsync(string userId)
         {
             IEnumerable<ProductIndexViewModel>? favProducts = null;
 
-            IdentityUser? user = await this.userManager
-                .FindByIdAsync(userId);
-
-            if (user != null)
-            {
-                favProducts = await this.dbContext
-                    .ApplicationUserProducts
-                    .AsNoTracking()
-                    .Where(aup => aup.ApplicationUserId == userId)
-                    .Select(aup => new ProductIndexViewModel()
-                    {
-                        Id = aup.ProductId,
-                        Name = aup.Product.Name,
-                        Price = aup.Product.Price,
-                        ImageUrl = aup.Product.ImageUrl
-                    })
-                    .ToArrayAsync();
-            }
+            favProducts = await this.favoriteRepository
+                .GetAllAttached()
+                .AsNoTracking()
+                .Where(aup => aup.ApplicationUserId == userId)
+                .Select(aup => new ProductIndexViewModel()
+                {
+                    Id = aup.ProductId,
+                    Name = aup.Product.Name,
+                    Price = aup.Product.Price,
+                    ImageUrl = aup.Product.ImageUrl
+                })
+                .ToListAsync();
 
             return favProducts;
         }
 
         public async Task<bool> AddProductToUserFavoritesAsync(Guid? productId, string userId)
         {
-            if (productId != null)
+            if (productId == null)
             {
-                var entry = await this.dbContext.ApplicationUserProducts
-                    .IgnoreQueryFilters()
-                    .SingleOrDefaultAsync(aup => aup.ApplicationUserId == userId && aup.ProductId == productId);
-
-                if (entry != null)
-                {
-                    entry.IsDeleted = false;
-                    this.dbContext.Update(entry);
-                }
-                else
-                {
-                    await this.dbContext.ApplicationUserProducts.AddAsync(new ApplicationUserProduct
-                    {
-                        ApplicationUserId = userId,
-                        ProductId = productId.Value
-                    });
-                }
-
-                await this.dbContext.SaveChangesAsync();
-                return true;
+                return false;
             }
 
-            return false;
-        }
+            ApplicationUserProduct? userProductEntry = await this.favoriteRepository
+                .GetAllAttached()
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(aup => aup.ApplicationUserId == userId && 
+                                        aup.ProductId == productId);
 
+            if (userProductEntry != null)
+            {
+                userProductEntry.IsDeleted = false;
+                return await this.favoriteRepository.UpdateAsync(userProductEntry);
+            }
+            else
+            {
+                userProductEntry = new ApplicationUserProduct()
+                {
+                    ApplicationUserId = userId,
+                    ProductId = productId.Value
+                };
+
+                await this.favoriteRepository.AddAsync(userProductEntry);
+                return true;
+            }
+        }
 
         public async Task<bool> DeleteProductFromUserFavoritesAsync(Guid? productId, string? userId)
         {
             if (productId != null && userId != null)
             {
-                ApplicationUserProduct? userProductEntry = await this.dbContext
-                    .ApplicationUserProducts
-                    .IgnoreQueryFilters()
+                ApplicationUserProduct? userProductEntry = await this.favoriteRepository
                     .SingleOrDefaultAsync(upe => upe.ApplicationUserId == userId
                         && upe.ProductId == productId);
 
@@ -89,9 +79,7 @@ namespace ClothingBrand.Services.Core
                 {
                     userProductEntry.IsDeleted = true;
 
-                    this.dbContext.ApplicationUserProducts.Update(userProductEntry);
-                    await this.dbContext.SaveChangesAsync();
-                    return true;
+                    return await this.favoriteRepository.DeleteAsync(userProductEntry);
                 }
             }
 
@@ -102,8 +90,7 @@ namespace ClothingBrand.Services.Core
         {
             if (productId != null && userId != null)
             {
-                ApplicationUserProduct? userProductEntry = await this.dbContext
-                    .ApplicationUserProducts
+                ApplicationUserProduct? userProductEntry = await this.favoriteRepository
                     .SingleOrDefaultAsync(upe => upe.ApplicationUserId == userId
                     && upe.ProductId == productId);
 

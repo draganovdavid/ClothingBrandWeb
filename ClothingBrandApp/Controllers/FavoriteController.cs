@@ -55,6 +55,7 @@ namespace ClothingBrandApp.Web.Controllers
                 string? userId = this.GetUserId();
                 if (userId == null)
                 {
+                    // Not a valid case, added as defensive mechanism
                     return this.Forbid();
                 }
 
