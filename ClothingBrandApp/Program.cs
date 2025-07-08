@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using ClothingBrand.Services.Core;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Data;
+using ClothingBrand.Data.Repository.Interfaces;
+using ClothingBrand.Data.Repository;
 
 namespace ClothingBrandApp.Web
 {
@@ -38,6 +40,11 @@ namespace ClothingBrandApp.Web
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            builder.Services.AddScoped<IShopRepository, ShopRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
+            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            
             builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IFavoriteService, FavoriteService>();
