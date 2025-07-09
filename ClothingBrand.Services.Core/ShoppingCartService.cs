@@ -1,116 +1,101 @@
 ﻿using ClothingBrand.Data.Models;
+using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
-using ClothingBrandApp.Data;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ClothingBrand.Services.Core
+public class ShoppingCartService : IShoppingCartService
 {
-    public class ShoppingCartService : IShoppingCartService
+    private readonly IShoppingCartRepository shoppingCartRepository;
+
+    public ShoppingCartService(IShoppingCartRepository shoppingCartRepository)
     {
-        private readonly ApplicationDbContext dbContext;
-        private readonly UserManager<IdentityUser> userManager;
+        this.shoppingCartRepository = shoppingCartRepository;
+    }
 
-        public ShoppingCartService(ApplicationDbContext dbContext, UserManager<IdentityUser> userManager)
-        {
-            this.dbContext = dbContext;
-            this.userManager = userManager;
-        }
-
-        public async Task<IEnumerable<ProductIndexViewModel>?> GetAllProductsInShoppingCartAsync(string userId)
-        {
-            IEnumerable<ProductIndexViewModel>? allProductsInShoppingCart = null;
-
-            IdentityUser? user = await this.userManager
-                .FindByIdAsync(userId);
-            if (user != null)
+    public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsInShoppingCartAsync(string userId)
+    {
+        return await this.shoppingCartRepository
+            .GetAllAttached()
+            .Include(ausc => ausc.Product)
+            .AsNoTracking()
+            .Where(ausc => ausc.ApplicationUserId == userId)
+            .Select(ausc => new ProductIndexViewModel
             {
-                allProductsInShoppingCart = await this.dbContext
-                .ApplicationUserShoppingCarts
-                .AsNoTracking()
-                .Select(ausc => new ProductIndexViewModel()
-                {
-                    Id = ausc.ProductId,
-                    Name = ausc.Product.Name,
-                    Price = ausc.Product.Price,
-                    ImageUrl = ausc.Product.ImageUrl
-                })
-                .ToArrayAsync();
-            }
+                Id = ausc.ProductId,
+                Name = ausc.Product.Name,
+                Price = ausc.Product.Price,
+                ImageUrl = ausc.Product.ImageUrl
+            })
+            .ToListAsync();
+    }
 
-            return allProductsInShoppingCart;
-        }
-
-        public async Task<bool> AddProductToShoppingCartAsync(Guid? productId, string userId)
+    public async Task<bool> AddProductToShoppingCartAsync(Guid? productId, string userId)
+    {
+        if (!productId.HasValue)
         {
-            if (productId != null)
-            {
-                var entry = await this.dbContext.ApplicationUserShoppingCarts
-                    .IgnoreQueryFilters()
-                    .SingleOrDefaultAsync(aup => aup.ApplicationUserId == userId && aup.ProductId == productId);
-
-                if (entry != null)
-                {
-                    entry.IsDeleted = false;
-                    this.dbContext.Update(entry);
-                }
-                else
-                {
-                    await this.dbContext.ApplicationUserShoppingCarts.AddAsync(new ApplicationUserShoppingCart
-                    {
-                        ApplicationUserId = userId,
-                        ProductId = productId.Value
-                    });
-                }
-
-                await this.dbContext.SaveChangesAsync();
-                return true;
-            }
-
             return false;
         }
 
-        public async Task<bool> DeleteProductFromShoppingCartAsync(Guid? productId, string userId)
+        ApplicationUserShoppingCart? userShopppingCartEntry = await this.shoppingCartRepository
+            .GetAllAttached()
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(aup => aup.ApplicationUserId == userId 
+                                            && aup.ProductId == productId);
+
+        if (userShopppingCartEntry != null)
         {
-            if (productId != null)
+            userShopppingCartEntry.IsDeleted = false;
+            return await this.shoppingCartRepository.UpdateAsync(userShopppingCartEntry);
+        }
+        else
+        {
+            userShopppingCartEntry = new ApplicationUserShoppingCart()
             {
-                ApplicationUserShoppingCart? userShoppingCartProductEntry = await this.dbContext
-                    .ApplicationUserShoppingCarts
-                    .IgnoreQueryFilters()
-                    .SingleOrDefaultAsync(ausc => ausc.ProductId == productId &&
-                                            ausc.ApplicationUserId == userId);
+                ApplicationUserId = userId,
+                ProductId = productId.Value
+            };
+            await this.shoppingCartRepository.AddAsync(userShopppingCartEntry);
 
-                if (userShoppingCartProductEntry != null)
-                {
-                    userShoppingCartProductEntry.IsDeleted = true;
+            return true;
+        }
+    }
 
-                    this.dbContext.ApplicationUserShoppingCarts
-                        .Update(userShoppingCartProductEntry);
-                    await this.dbContext.SaveChangesAsync();
-                    return true;
-                }
-            }
-
+    public async Task<bool> DeleteProductFromShoppingCartAsync(Guid? productId, string userId)
+    {
+        if (!productId.HasValue) 
+        {
             return false;
         }
 
-        public async Task<bool> IsProductAddedToShoppingCart(Guid? productId, string userId)
+        ApplicationUserShoppingCart? userShoppingCartEntry = await this.shoppingCartRepository
+            .GetAllAttached()
+            .IgnoreQueryFilters()
+            .SingleOrDefaultAsync(ausc => ausc.ProductId == productId && 
+                                        ausc.ApplicationUserId == userId);
+
+        if (userShoppingCartEntry == null)
         {
-            if (productId != null)
-            {
-                ApplicationUserShoppingCart? userProductEntry = await this.dbContext
-                    .ApplicationUserShoppingCarts
-                    .SingleOrDefaultAsync(upe => upe.ApplicationUserId == userId
-                    && upe.ProductId == productId);
-
-                if (userProductEntry != null)
-                {
-                    return true;
-                }
-            }
-
             return false;
         }
+
+        userShoppingCartEntry.IsDeleted = true;
+        await this.shoppingCartRepository.UpdateAsync(userShoppingCartEntry);
+        await this.shoppingCartRepository.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> IsProductAddedToShoppingCart(Guid? productId, string userId)
+    {
+        if (!productId.HasValue)
+        {
+            return false;
+        }
+
+        return await this.shoppingCartRepository
+            .GetAllAttached()
+            .AnyAsync(upe => upe.ApplicationUserId == userId && 
+                                     upe.ProductId == productId);
     }
 }

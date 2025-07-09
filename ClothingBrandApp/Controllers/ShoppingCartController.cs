@@ -1,101 +1,94 @@
-﻿using ClothingBrand.Services.Core;
-using ClothingBrand.Services.Core.Interfaces;
-using ClothingBrandApp.Web.ViewModels.Product;
+﻿using ClothingBrand.Services.Core.Interfaces;
+using ClothingBrandApp.Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ClothingBrandApp.Web.Controllers
+public class ShoppingCartController : BaseController
 {
-    public class ShoppingCartController : BaseController
+    private readonly IShoppingCartService shoppingCartService;
+
+    public ShoppingCartController(IShoppingCartService shoppingCartService)
     {
-        private readonly IShoppingCartService shoppingCart;
+        this.shoppingCartService = shoppingCartService;
+    }
 
-        public ShoppingCartController(IShoppingCartService shoppingCart)
+    [HttpGet]
+    public async Task<IActionResult> Index()
+    {
+        try
         {
-            this.shoppingCart = shoppingCart;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            try
+            string? userId = this.GetUserId();
+            if (userId == null)
             {
-                string? userId = this.GetUserId();
-                if (userId == null)
-                {
-                    return this.Forbid();
-                }
-
-                IEnumerable<ProductIndexViewModel>? userShoopingCartProducts = await this.shoppingCart
-                    .GetAllProductsInShoppingCartAsync(userId);
-                
-                return this.View(userShoopingCartProducts);
+                return this.Forbid();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-
-                return this.RedirectToAction(nameof(Index), "Home");
-            }
+            var userShoppingCartProducts = await this.shoppingCartService
+                .GetAllProductsInShoppingCartAsync(userId);
+            return View(userShoppingCartProducts);
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Add(Guid? productId)
+        catch (Exception e)
         {
-            try
-            {
-                string? userId = this.GetUserId();
-                if (userId == null)
-                {
-                    return this.Forbid();
-                }
+            Console.WriteLine(e.Message);
+            return RedirectToAction(nameof(Index), "Home");
+        }
+    }
 
-                bool wasAdded = await this.shoppingCart
+    [HttpPost]
+    public async Task<IActionResult> Add(Guid? productId)
+    {
+        try
+        {
+            string? userId = this.GetUserId();
+            if (userId == null)
+            {
+                // Not a valid case, added as defensive mechanism
+                return this.Forbid();
+            }
+
+            bool result = await this.shoppingCartService
                     .AddProductToShoppingCartAsync(productId, userId);
-
-                if (!wasAdded)
-                {
-                    return this.RedirectToAction(nameof(Index), "Shop");
-                }
-
-                return this.RedirectToAction(nameof(Index));
-            }
-            catch (Exception e)
+            if (result == false)
             {
-                Console.WriteLine(e.Message);
-                
-                return this.RedirectToAction(nameof(Index), "Home");
+                // TODO: Add JS notifications
+                return this.RedirectToAction(nameof(Index), "Shop");
             }
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> Delete(Guid? productId)
+            return this.RedirectToAction(nameof(Index));
+        }
+        catch (Exception e)
         {
-            try
+            Console.WriteLine(e.Message);
+
+            return this.RedirectToAction(nameof(Index), "Home");
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Delete(Guid? productId)
+    {
+        try
+        {
+            string? userId = this.GetUserId();
+            if (userId == null)
             {
-                string? userId = this.GetUserId();
-                if (userId == null)
-                {
-                    return this.Forbid();
-                }
-
-                bool result = await this.shoppingCart
-                    .DeleteProductFromShoppingCartAsync(productId, userId);
-                if (result == false)
-                {
-                    // TODO: Add JS notifications
-                    return this.RedirectToAction(nameof(Index), "Shop");
-                }
-
-                return this.RedirectToAction(nameof(Index));
+                // Not a valid case, added as defensive mechanism
+                return this.Forbid();
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
 
+            bool result = await this.shoppingCartService
+                .DeleteProductFromShoppingCartAsync(productId, userId);
+            if (result == false)
+            {
+                // TODO: Add JS notifications
                 return this.RedirectToAction(nameof(Index), "Home");
             }
-        }
 
-        
+            return this.RedirectToAction(nameof(Index));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+
+            return this.RedirectToAction(nameof(Index), "Home");
+        }
     }
 }

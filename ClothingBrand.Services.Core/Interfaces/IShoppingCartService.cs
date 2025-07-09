@@ -4,7 +4,7 @@ namespace ClothingBrand.Services.Core.Interfaces
 {
     public interface IShoppingCartService
     {
-        Task<IEnumerable<ProductIndexViewModel>?> GetAllProductsInShoppingCartAsync(string userId);
+        Task<IEnumerable<ProductIndexViewModel>> GetAllProductsInShoppingCartAsync(string userId);
 
         Task<bool> AddProductToShoppingCartAsync(Guid? productId, string userId);
 

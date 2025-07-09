@@ -2,7 +2,6 @@
 using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Product;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Services.Core
