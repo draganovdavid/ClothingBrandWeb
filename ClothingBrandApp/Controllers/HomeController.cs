@@ -1,7 +1,8 @@
-using System.Diagnostics;
 using ClothingBrandApp.Models;
 using ClothingBrandApp.Web.Controllers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace ClothingBrand.Web.Controllers
 {
@@ -14,6 +15,7 @@ namespace ClothingBrand.Web.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();

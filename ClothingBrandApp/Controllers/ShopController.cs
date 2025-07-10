@@ -2,6 +2,7 @@
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.Controllers;
 using ClothingBrandApp.Web.ViewModels.Product;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Product;
 
@@ -24,6 +25,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             IEnumerable<ProductIndexViewModel> allProducts = await shopService
@@ -81,6 +83,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> Details(Guid? id)
         {
             try
@@ -230,6 +233,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> MenCollection()
         {
             const string  genderName = "Men";
@@ -249,6 +253,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> WomenCollection()
         {
             const string genderName = "Women";
@@ -268,6 +273,7 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> KidsCollection()
         {
             const string genderName = "Kids";
