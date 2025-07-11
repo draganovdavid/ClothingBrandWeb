@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Data.Models
 {
+    [Comment("User's favorite products")]
     public class ApplicationUserProduct
     {
         [Comment("Foreign key to the reference Application User.")]

@@ -1,9 +1,14 @@
-﻿namespace ClothingBrand.Data.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace ClothingBrand.Data.Models
 {
     public class Category
     {
+        [Comment("Category identifier")]
         public int Id { get; set; }
-        public string Name { get; set; } = null!; //Collection: Men, Women, Kids
+
+        [Comment("Category name")]
+        public string Name { get; set; } = null!;
 
         public virtual ICollection<Product> Products { get; set; } 
             = new HashSet<Product>();

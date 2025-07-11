@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClothingBrand.Data.Models
 {
+    [Comment("User's products in shopping cart")]
     public class ApplicationUserShoppingCart
     {
         [Comment("Foreign key to the reference Application User.")]
