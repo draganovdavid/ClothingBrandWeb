@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using static ClothingBrand.Data.Common.EntityConstants.Product;
 using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Product;
+using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Warehouse;
 
 namespace ClothingBrandApp.Web.ViewModels.Product
 {
@@ -33,6 +34,9 @@ namespace ClothingBrandApp.Web.ViewModels.Product
         [MinLength(DescriptionMinLength, ErrorMessage = DescriptionMinLengthMessage)]
         [MaxLength(DescriptionMaxLength, ErrorMessage = DescriptionMaxLengthMessage)]
         public string Description { get; set; } = null!;
+
+        [Required(ErrorMessage = WarehouseRequiredMessage)]
+        public string WarehouseName { get; set; } = null!;
 
         [MaxLength(ImageUrlMaxLength, ErrorMessage = ImageUrlMaxLengthMessage)]
         public string? ImageUrl { get; set; }

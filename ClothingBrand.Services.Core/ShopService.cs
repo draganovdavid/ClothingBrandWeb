@@ -11,13 +11,16 @@ namespace ClothingBrand.Services.Core
     {
         private readonly IShopRepository shopRepository;
         private readonly ICategoryRepository categoryRepository;
+        private readonly IWarehouseRepository warehouseRepository;
         private readonly UserManager<IdentityUser> userManager;
-
-        public ShopService(IShopRepository shopRepository, ICategoryRepository categoryRepository, UserManager<IdentityUser> userManager)
+        
+        public ShopService(IShopRepository shopRepository, ICategoryRepository categoryRepository, IWarehouseRepository warehouseRepository, 
+            UserManager<IdentityUser> userManager)
         {
             this.shopRepository = shopRepository;
             this.userManager = userManager;
             this.categoryRepository = categoryRepository;
+            this.warehouseRepository = warehouseRepository;
         }
 
         public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync()
@@ -49,12 +52,15 @@ namespace ClothingBrand.Services.Core
 
         public async Task AddProductAsync(string userId, ProductFormInputModel inputModel)
         {
-            IdentityUser? user = await userManager.FindByIdAsync(userId);
+            IdentityUser? user = await this.userManager.FindByIdAsync(userId);
             Category? category = await this.categoryRepository
                 .FirstOrDefaultAsync(c => c.Id == inputModel.CategoryId);
+            Warehouse? warehouse = await this.warehouseRepository
+                .FirstOrDefaultAsync(w => w.Name.ToLower() == inputModel.WarehouseName.ToLower());
             int genderId = GetGenderId(inputModel.Gender);
 
-            if (user != null && category != null && genderId != 0 && inputModel.Price.HasValue)
+            if (user != null && category != null && genderId != 0 && inputModel.Price.HasValue &&
+                warehouse != null)
             {
                 var newProduct = new Product
                 {
@@ -65,7 +71,7 @@ namespace ClothingBrand.Services.Core
                     Size = inputModel.Size,
                     ImageUrl = inputModel.ImageUrl,
                     InStock = inputModel.InStock,
-                    AuthorId = user.Id,
+                    WarehouseId = warehouse.Id,
                     CategoryId = category.Id,
                     GenderId = genderId,
                     IsDeleted = false
@@ -133,9 +139,11 @@ namespace ClothingBrand.Services.Core
                 .GetByIdAsync(productId);
             Category? category = await this.categoryRepository
                 .GetByIdAsync(inputModel.CategoryId);
+            Warehouse? warehouse = await this.warehouseRepository
+                .FirstOrDefaultAsync(w => w.Name.ToLower() == inputModel.WarehouseName.ToLower());
             int genderId = GetGenderId(inputModel.Gender);
 
-            if (editableProduct == null || category == null || genderId == 0)
+            if (editableProduct == null || category == null || genderId == 0 || warehouse == null)
             {
                 return false;
             }
@@ -148,6 +156,7 @@ namespace ClothingBrand.Services.Core
             editableProduct.InStock = inputModel.InStock;
             editableProduct.CategoryId = category.Id;
             editableProduct.GenderId = genderId;
+            editableProduct.WarehouseId = warehouse.Id;
 
             result = await this.shopRepository.UpdateAsync(editableProduct);
 
@@ -227,6 +236,5 @@ namespace ClothingBrand.Services.Core
                 _ => 0
             };
         }
-
     }
 }

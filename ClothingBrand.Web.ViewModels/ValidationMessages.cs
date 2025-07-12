@@ -35,5 +35,10 @@
             public const string ServiceCreateErrorMessage =
                 "A fatal error occurred while adding your product! Please try again later!";
         }
+
+        public static class Warehouse
+        {
+            public const string WarehouseRequiredMessage = "Warehouse name is required";
+        }
     }
 }

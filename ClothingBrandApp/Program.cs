@@ -44,6 +44,7 @@ namespace ClothingBrandApp.Web
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
             builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+            builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
             
             builder.Services.AddScoped<IShopService, ShopService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();

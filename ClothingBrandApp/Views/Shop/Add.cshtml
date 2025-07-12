@@ -65,6 +65,16 @@
                 </div>
 
                 <div class="mb-3">
+                    <label asp-for="WarehouseName" class="form-label fw-bold">Warehouse</label>
+                    <select asp-for="WarehouseName" class="form-control">
+                        <option value="">-- Select Warehouse --</option>
+                        <option value="Veliko Turnovo">Veliko Turnovo</option>
+                        <option value="Sofia">Sofia</option>
+                    </select>
+                    <span asp-validation-for="WarehouseName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
                     <label asp-for="InStock" class="form-label fw-bold">In Stock</label>
                     <div class="form-check form-switch">
                         <input asp-for="InStock" class="form-check-input" type="checkbox" role="switch" id="inStockSwitch">
