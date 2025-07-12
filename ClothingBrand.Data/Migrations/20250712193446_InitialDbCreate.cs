@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ClothingBrand.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalDbCreate : Migration
+    public partial class InitialDbCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -54,9 +54,9 @@ namespace ClothingBrand.Data.Migrations
                 name: "Categories",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Category identifier")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, comment: "Category name")
                 },
                 constraints: table =>
                 {
@@ -67,9 +67,9 @@ namespace ClothingBrand.Data.Migrations
                 name: "Genders",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false, comment: "Gender identifier")
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(7)", maxLength: 7, nullable: false, comment: "Gender name")
                 },
                 constraints: table =>
                 {
@@ -183,30 +183,65 @@ namespace ClothingBrand.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
+                name: "Managers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    Size = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
-                    InStock = table.Column<bool>(type: "bit", nullable: false),
-                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    GenderId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Manager identifier"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false, comment: "Manager's user entity"),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.PrimaryKey("PK_Managers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_AspNetUsers_AuthorId",
-                        column: x => x.AuthorId,
+                        name: "FK_Managers_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
+                },
+                comment: "Manager in the system");
+
+            migrationBuilder.CreateTable(
+                name: "Warehouses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Warehouse identifier"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Warehouse name"),
+                    Location = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false, comment: "Warehouse location"),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false, comment: "Shows if warehouse is deleted"),
+                    ManagerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true, comment: "Warehouse's manager")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Warehouses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Warehouses_Managers_ManagerId",
+                        column: x => x.ManagerId,
+                        principalTable: "Managers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Product identifier"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false, comment: "Product name"),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false, comment: "Product description"),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false, comment: "Product price"),
+                    Size = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false, comment: "Product size"),
+                    ImageUrl = table.Column<string>(type: "varchar(2048)", unicode: false, maxLength: 2048, nullable: true, comment: "Product ImageUrl"),
+                    InStock = table.Column<bool>(type: "bit", nullable: false, comment: "Product availability"),
+                    WarehouseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, comment: "Product warehouse identifier"),
+                    CategoryId = table.Column<int>(type: "int", nullable: false, comment: "Product category"),
+                    GenderId = table.Column<int>(type: "int", nullable: false, comment: "Product gender"),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false, comment: "Shows if product is deleted")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -217,6 +252,12 @@ namespace ClothingBrand.Data.Migrations
                         name: "FK_Products_Genders_GenderId",
                         column: x => x.GenderId,
                         principalTable: "Genders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_Warehouses_WarehouseId",
+                        column: x => x.WarehouseId,
+                        principalTable: "Warehouses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -244,7 +285,8 @@ namespace ClothingBrand.Data.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
+                },
+                comment: "User's favorite products");
 
             migrationBuilder.CreateTable(
                 name: "ApplicationUserShoppingCarts",
@@ -269,12 +311,23 @@ namespace ClothingBrand.Data.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
+                },
+                comment: "User's products in shopping cart");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationUserProducts_ApplicationUserId_ProductId",
+                table: "ApplicationUserProducts",
+                columns: new[] { "ApplicationUserId", "ProductId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUserProducts_ProductId",
                 table: "ApplicationUserProducts",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ApplicationUserShoppingCarts_ApplicationUserId_ProductId",
+                table: "ApplicationUserShoppingCarts",
+                columns: new[] { "ApplicationUserId", "ProductId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ApplicationUserShoppingCarts_ProductId",
@@ -321,9 +374,10 @@ namespace ClothingBrand.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_AuthorId",
-                table: "Products",
-                column: "AuthorId");
+                name: "IX_Managers_UserId",
+                table: "Managers",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
@@ -334,6 +388,16 @@ namespace ClothingBrand.Data.Migrations
                 name: "IX_Products_GenderId",
                 table: "Products",
                 column: "GenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_WarehouseId",
+                table: "Products",
+                column: "WarehouseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Warehouses_ManagerId",
+                table: "Warehouses",
+                column: "ManagerId");
         }
 
         /// <inheritdoc />
@@ -367,13 +431,19 @@ namespace ClothingBrand.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Genders");
+
+            migrationBuilder.DropTable(
+                name: "Warehouses");
+
+            migrationBuilder.DropTable(
+                name: "Managers");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClothingBrand.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250630175555_InitialDbSeed")]
-    partial class InitialDbSeed
+    [Migration("20250712193446_InitialDbCreate")]
+    partial class InitialDbCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,7 +45,12 @@ namespace ClothingBrand.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ApplicationUserProducts");
+                    b.HasIndex("ApplicationUserId", "ProductId");
+
+                    b.ToTable("ApplicationUserProducts", t =>
+                        {
+                            t.HasComment("User's favorite products");
+                        });
                 });
 
             modelBuilder.Entity("ClothingBrand.Data.Models.ApplicationUserShoppingCart", b =>
@@ -68,79 +73,79 @@ namespace ClothingBrand.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ApplicationUserShoppingCarts");
+                    b.HasIndex("ApplicationUserId", "ProductId");
+
+                    b.ToTable("ApplicationUserShoppingCarts", t =>
+                        {
+                            t.HasComment("User's products in shopping cart");
+                        });
                 });
 
             modelBuilder.Entity("ClothingBrand.Data.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Category identifier");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasComment("Category name");
 
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "T-Shirts"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Hoodies"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Jeans"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Jackets"
-                        });
                 });
 
             modelBuilder.Entity("ClothingBrand.Data.Models.Gender", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Gender identifier");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)")
+                        .HasComment("Gender name");
 
                     b.HasKey("Id");
 
                     b.ToTable("Genders");
+                });
 
-                    b.HasData(
-                        new
+            modelBuilder.Entity("ClothingBrand.Data.Models.Manager", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Manager identifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasComment("Manager's user entity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Managers", t =>
                         {
-                            Id = 1,
-                            Name = "Men"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Women"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Kids"
+                            t.HasComment("Manager in the system");
                         });
                 });
 
@@ -148,141 +153,105 @@ namespace ClothingBrand.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Product identifier");
 
                     b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Product category");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasComment("Product description");
 
                     b.Property<int>("GenderId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasComment("Product gender");
 
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(2048)")
+                        .HasComment("Product ImageUrl");
 
                     b.Property<bool>("InStock")
-                        .HasColumnType("bit");
+                        .HasColumnType("bit")
+                        .HasComment("Product availability");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasDefaultValue(false)
+                        .HasComment("Shows if product is deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Product name");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,2)")
+                        .HasComment("Product price");
 
                     b.Property<string>("Size")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasComment("Product size");
+
+                    b.Property<Guid>("WarehouseId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Product warehouse identifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("GenderId");
 
-                    b.ToTable("Products");
+                    b.HasIndex("WarehouseId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("b7a1c162-1cfe-4d87-9916-2d9e373fda17"),
-                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            CategoryId = 1,
-                            Description = "Леки и дишащи къси гащи, подходящи за спорт и ежедневие.",
-                            GenderId = 1,
-                            ImageUrl = "https://example.com/images/nike-running-shorts.jpg",
-                            InStock = true,
-                            IsDeleted = false,
-                            Name = "Nike Dri-FIT Running Shorts",
-                            Price = 39.99m,
-                            Size = "M"
-                        },
-                        new
-                        {
-                            Id = new Guid("7a93cc29-89b8-4fb5-8714-9be26f71f611"),
-                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            CategoryId = 1,
-                            Description = "Памучни къси гащи за всекидневен комфорт с лого на Nike.",
-                            GenderId = 2,
-                            ImageUrl = "https://example.com/images/nike-club-shorts.jpg",
-                            InStock = true,
-                            IsDeleted = false,
-                            Name = "Nike Sportswear Club Shorts",
-                            Price = 34.90m,
-                            Size = "L"
-                        },
-                        new
-                        {
-                            Id = new Guid("fdd9c18d-1a2d-452b-b504-e0d5f5c20f14"),
-                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            CategoryId = 1,
-                            Description = "Спортна тениска с къс ръкав, изработена от влагоотвеждаща материя.",
-                            GenderId = 1,
-                            ImageUrl = "https://example.com/images/nike-drifit-shirt.jpg",
-                            InStock = true,
-                            IsDeleted = false,
-                            Name = "Nike Dri-FIT Legend T-Shirt",
-                            Price = 29.99m,
-                            Size = "S"
-                        },
-                        new
-                        {
-                            Id = new Guid("2f1c64b0-9c9d-44d2-8124-3e8bd6f3d319"),
-                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            CategoryId = 1,
-                            Description = "Мека тениска с класически дизайн и принт на Air Max.",
-                            GenderId = 3,
-                            ImageUrl = "https://example.com/images/nike-airmax-tee.jpg",
-                            InStock = true,
-                            IsDeleted = false,
-                            Name = "Nike Air Max Graphic Tee",
-                            Price = 24.90m,
-                            Size = "XL"
-                        },
-                        new
-                        {
-                            Id = new Guid("a3d610c8-7e7c-4d7b-b2c4-150ad277d310"),
-                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            CategoryId = 1,
-                            Description = "Comfortable 100% cotton T-shirt.",
-                            GenderId = 1,
-                            ImageUrl = "https://example.com/images/white-tshirt.jpg",
-                            InStock = true,
-                            IsDeleted = false,
-                            Name = "Basic White T-Shirt",
-                            Price = 19.99m,
-                            Size = "M"
-                        },
-                        new
-                        {
-                            Id = new Guid("d3a7a590-0873-4760-97c9-bbf7b2750116"),
-                            AuthorId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            CategoryId = 3,
-                            Description = "Comfortable 100% cotton T-shirt.",
-                            GenderId = 2,
-                            ImageUrl = "https://example.com/images/jeans.jpg",
-                            InStock = true,
-                            IsDeleted = false,
-                            Name = "Basic Black T-Shirt",
-                            Price = 19.99m,
-                            Size = "L"
-                        });
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("ClothingBrand.Data.Models.Warehouse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Warehouse identifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasComment("Shows if warehouse is deleted");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .HasComment("Warehouse location");
+
+                    b.Property<Guid?>("ManagerId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Warehouse's manager");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasComment("Warehouse name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
+
+                    b.ToTable("Warehouses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -400,24 +369,6 @@ namespace ClothingBrand.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "2ff7b062-aa49-42f9-b386-7f8491261943",
-                            Email = "admin@recipesharing.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@RECIPESHARING.COM",
-                            NormalizedUserName = "ADMIN@RECIPESHARING.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEL9k2iLUviHYI/qu+kkem2RaUYXlWzxzYG3HriTJtF9zC+Miqb4gkBQqvCFUR0aR+w==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "81970a81-ad26-470a-8886-443af07f0a03",
-                            TwoFactorEnabled = false,
-                            UserName = "admin@recipesharing.com"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -543,14 +494,19 @@ namespace ClothingBrand.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ClothingBrand.Data.Models.Product", b =>
+            modelBuilder.Entity("ClothingBrand.Data.Models.Manager", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithOne()
+                        .HasForeignKey("ClothingBrand.Data.Models.Manager", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClothingBrand.Data.Models.Product", b =>
+                {
                     b.HasOne("ClothingBrand.Data.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
@@ -563,11 +519,27 @@ namespace ClothingBrand.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Author");
+                    b.HasOne("ClothingBrand.Data.Models.Warehouse", "Warehouse")
+                        .WithMany("WarehouseProducts")
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Category");
 
                     b.Navigation("Gender");
+
+                    b.Navigation("Warehouse");
+                });
+
+            modelBuilder.Entity("ClothingBrand.Data.Models.Warehouse", b =>
+                {
+                    b.HasOne("ClothingBrand.Data.Models.Manager", "Manager")
+                        .WithMany("ManagedWarehouses")
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -631,11 +603,21 @@ namespace ClothingBrand.Data.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("ClothingBrand.Data.Models.Manager", b =>
+                {
+                    b.Navigation("ManagedWarehouses");
+                });
+
             modelBuilder.Entity("ClothingBrand.Data.Models.Product", b =>
                 {
                     b.Navigation("UserFavorites");
 
                     b.Navigation("UserShoppingCartItems");
+                });
+
+            modelBuilder.Entity("ClothingBrand.Data.Models.Warehouse", b =>
+                {
+                    b.Navigation("WarehouseProducts");
                 });
 #pragma warning restore 612, 618
         }
