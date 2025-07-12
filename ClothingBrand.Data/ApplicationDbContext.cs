@@ -19,6 +19,10 @@ namespace ClothingBrandApp.Data
             = null!;
         public virtual DbSet<ApplicationUserShoppingCart> ApplicationUserShoppingCarts { get; set; } = null!;
 
+        public virtual DbSet<Manager> Managers { get; set; } = null!;
+
+        public virtual DbSet<Warehouse> Warehouses { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

@@ -1,6 +1,7 @@
 ﻿using ClothingBrand.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using static ClothingBrand.Data.Common.EntityConstants.Gender;
 
 namespace ClothingBrand.Data.Configuration
 {
@@ -13,7 +14,8 @@ namespace ClothingBrand.Data.Configuration
 
             entity
                 .Property(g => g.Name)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(GenderMaxLength);
 
             entity
                 .HasData(this.GendersSeed());

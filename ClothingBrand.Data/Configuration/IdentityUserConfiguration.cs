@@ -17,13 +17,13 @@ namespace ClothingBrand.Data.Configuration
             IdentityUser defaultUser = new IdentityUser
             {
                 Id = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
-                UserName = "admin@recipesharing.com",
-                NormalizedUserName = "ADMIN@RECIPESHARING.COM",
+                UserName = "admin@clothingbrand.com",
+                NormalizedUserName = "ADMIN@CLOTHINGBRAND.COM",
                 Email = "admin@recipesharing.com",
-                NormalizedEmail = "ADMIN@RECIPESHARING.COM",
+                NormalizedEmail = "ADMIN@CLOTHINGBRAND.COM",
                 EmailConfirmed = true,
                 PasswordHash = new PasswordHasher<IdentityUser>().HashPassword(
-                    new IdentityUser { UserName = "admin@recipesharing.com" },
+                    new IdentityUser { UserName = "admin@clothingbrand.com" },
                     "Admin123!")
             };
 

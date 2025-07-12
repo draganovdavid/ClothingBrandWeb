@@ -29,6 +29,9 @@ namespace ClothingBrand.Data.Configuration
                 .WithMany(p => p.UserShoppingCartItems)
                 .HasForeignKey(e => e.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .HasIndex(e => new { e.ApplicationUserId, e.ProductId });
         }
     }
 }

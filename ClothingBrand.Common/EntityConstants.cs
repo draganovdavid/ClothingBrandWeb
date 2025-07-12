@@ -72,5 +72,19 @@
             /// </summary>
             public const int CategoryMaxLength = 50;
         }
+
+        public static class Gender
+        {
+            public const int GenderMaxLength = 7;
+
+            public const int GenderMinLength = 3;
+        }
+
+        public static class Warehouse
+        {
+            public const int NameMaxLength = 100;
+
+            public const int LocationMaxLength = 200;
+        }
     }
 }

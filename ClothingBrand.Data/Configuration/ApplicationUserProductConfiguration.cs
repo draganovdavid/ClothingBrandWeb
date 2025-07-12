@@ -29,6 +29,9 @@ namespace ClothingBrand.Data.Configuration
                 .WithMany(p => p.UserFavorites)
                 .HasForeignKey(e => e.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity
+                .HasIndex(e => new { e.ApplicationUserId, e.ProductId });
         }
     }
 }
