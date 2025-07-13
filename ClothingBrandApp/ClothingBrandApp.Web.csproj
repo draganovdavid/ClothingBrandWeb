@@ -22,6 +22,7 @@
     <ProjectReference Include="..\ClothingBrand.Services.Core\ClothingBrand.Services.Core.csproj" />
     <ProjectReference Include="..\ClothingBrand.Web.ViewModels\ClothingBrandApp.Web.ViewModels.csproj" />
     <ProjectReference Include="..\ClothingBrandApp.GCommon\ClothingBrand.GCommon.csproj" />
+    <ProjectReference Include="..\ClothingBrandApp.Web.Infrastructure\ClothingBrandApp.Web.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

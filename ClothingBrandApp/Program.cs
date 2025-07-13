@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using ClothingBrand.Data.Repository;
+using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Data;
-using ClothingBrand.Data.Repository.Interfaces;
-using ClothingBrand.Data.Repository;
+using static ClothingBrandApp.Web.Infrastructure.Extensions.WebApplicationExtensions;
+using static ClothingBrandApp.Web.Infrastructure.Extensions.ServiceCollectionExtensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrandApp.Web
 {
@@ -45,11 +47,10 @@ namespace ClothingBrandApp.Web
             builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
             builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
             builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
-            
-            builder.Services.AddScoped<IShopService, ShopService>();
-            builder.Services.AddScoped<ICategoryService, CategoryService>();
-            builder.Services.AddScoped<IFavoriteService, FavoriteService>();
-            builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
+            builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
+
+
+            builder.Services.AddUserDefinedServices(typeof(IShopService).Assembly);
 
             builder.Services.AddControllersWithViews();
 
@@ -74,6 +75,7 @@ namespace ClothingBrandApp.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseManagerAccessRestriction();
 
             app.MapControllerRoute(
                 name: "default",
