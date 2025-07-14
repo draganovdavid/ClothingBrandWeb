@@ -42,14 +42,8 @@ namespace ClothingBrandApp.Web
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddScoped<IShopRepository, ShopRepository>();
-            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-            builder.Services.AddScoped<IFavoriteRepository, FavoriteRepository>();
-            builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
-            builder.Services.AddScoped<IWarehouseRepository, WarehouseRepository>();
-            builder.Services.AddScoped<IManagerRepository, ManagerRepository>();
 
-
+            builder.Services.AddRepositories(typeof(IShopRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IShopService).Assembly);
 
             builder.Services.AddControllersWithViews();

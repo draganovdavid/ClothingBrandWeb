@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClothingBrand.Services.Core\ClothingBrand.Services.Core.csproj" />
+    <ProjectReference Include="..\ClothingBrandApp.GCommon\ClothingBrand.GCommon.csproj" />
   </ItemGroup>
 
 </Project>
