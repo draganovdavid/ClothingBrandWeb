@@ -1,0 +1,99 @@
+﻿:root {
+    --background-dark: #121212;
+    --card-bg: rgba(30, 30, 30, 0.95);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --shadow-dark: 0 8px 32px rgba(0, 0, 0, 0.75);
+    --blur-amount: 16px;
+    --yellow-accent: #ffc107;
+    --text-color: #ffffff;
+    --text-light: #d1d1d1;
+    --red-button: #e53935;
+    --red-button-hover: #d32f2f;
+}
+
+/* Center Content */
+.custom-404-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Error Card */
+.error-container {
+    padding: 40px;
+    background: var(--card-bg);
+    border-radius: 18px;
+    box-shadow: var(--shadow-dark);
+    width: 100%;
+    max-width: 600px;
+    backdrop-filter: blur(var(--blur-amount));
+    border: 1px solid var(--border-color);
+    text-align: center;
+    animation: fadeIn 0.8s ease-out;
+    transition: transform 0.3s;
+}
+
+    .error-container:hover {
+        transform: scale(1.02);
+    }
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Code */
+.error-code {
+    font-size: clamp(80px, 15vw, 120px);
+    font-weight: 900;
+    color: var(--yellow-accent);
+    margin-bottom: 15px;
+    text-shadow: 3px 3px 8px rgba(0,0,0,0.7);
+}
+
+/* Headline */
+.error-message {
+    font-size: clamp(28px, 5vw, 36px);
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+
+/* Description */
+.error-description {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: var(--text-light);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+/* Button */
+.btn-home {
+    display: inline-block;
+    padding: 14px 32px;
+    font-size: 16px;
+    color: var(--text-color);
+    background: var(--red-button);
+    border: none;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+    .btn-home:hover {
+        background: var(--red-button-hover);
+        color: var(--text-color);
+        transform: scale(1.05);
+    }

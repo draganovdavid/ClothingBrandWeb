@@ -1,6 +1,4 @@
-using ClothingBrand.Data.Repository;
 using ClothingBrand.Data.Repository.Interfaces;
-using ClothingBrand.Services.Core;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Data;
 using static ClothingBrandApp.Web.Infrastructure.Extensions.WebApplicationExtensions;
@@ -42,7 +40,6 @@ namespace ClothingBrandApp.Web
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-
             builder.Services.AddRepositories(typeof(IShopRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IShopService).Assembly);
 
@@ -61,6 +58,8 @@ namespace ClothingBrandApp.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseStatusCodePagesWithRedirects("/Home/Error?statusCode={0}");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
