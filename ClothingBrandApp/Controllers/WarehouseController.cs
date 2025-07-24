@@ -34,8 +34,23 @@ namespace ClothingBrandApp.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Stock(string? id)
         {
+            try
+            {
+                WarehouseStockViewModel? clothingWarehouses = await this.warehouseService
+                    .GetWarehouseProductsAsync(id);
+                if (clothingWarehouses == null)
+                {
+                    return this.RedirectToAction(nameof(Index));
+                }
 
-            return View();
+                return this.View(clothingWarehouses);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+
+                return this.RedirectToAction(nameof(Index));
+            }
         }
     }
 }

@@ -6,6 +6,6 @@ namespace ClothingBrand.Services.Core.Interfaces
     {
         Task<IEnumerable<WarehouseIndexViewModel>> GetAllWarehousesViewAsync();
 
-
+        Task<WarehouseStockViewModel?> GetWarehouseProductsAsync(string? id);
     }
 }

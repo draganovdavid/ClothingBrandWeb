@@ -1,11 +1,9 @@
-﻿﻿@using ClothingBrandApp.Web.ViewModels.Warehouse
+﻿@using ClothingBrandApp.Web.ViewModels.Warehouse
 @model IEnumerable<WarehouseIndexViewModel>
 
 @{
-    ViewData["Title"] = "Explore Cinemas";
-    IEnumerable<string> warehouseLocations = Model
-        .Select(c => c.Location)
-        .Distinct();
+    ViewData["Title"] = "Explore Warehouses";
+    IEnumerable<string> warehouseLocations = Model.Select(c => c.Location).Distinct();
 }
 
 @section Styles {
@@ -24,25 +22,34 @@
         <partial name="_WarehouseSearchAndFilterPartial" model="warehouseLocations" />
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3" id="warehouseContainer">
-            @foreach (WarehouseIndexViewModel warehouse in Model.Take(8))
+            @foreach (var warehouse in Model.Take(8))
             {
                 <div class="col warehouse-card" data-city="@warehouse.Location.ToLower()">
                     <div class="card shadow-lg border-0 rounded-3 h-100 warehouse-index-card">
                         <img src="~/images/clothing-warehouse-in-bulgaria.jpg"
                              class="card-img-top"
-                             alt="warehouse.Name"
+                             alt="@warehouse.Name"
                              style="height: 160px; object-fit: cover; border-radius: 8px 8px 0 0;">
-                        <div class="card-body text-center">
-                            <h6 class="card-title fw-bold text-dark">@warehouse.Name</h6>
-                            <p class="card-text text-muted small"><i class="bi bi-geo-alt-fill"></i> @warehouse.Location</p>
-                            <a asp-controller="Warehouse" asp-action="Program" asp-route-id="@warehouse.Id"
-                               class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                <i class="fas fa-eye"></i> View Program
-                            </a>
-                            <a asp-controller="Warehouse" asp-action="Details" asp-route-id="@warehouse.Id"
-                               class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                <i class="fas fa-eye"></i> View Details
-                            </a>
+                        <div class="card-body text-center d-flex flex-column justify-content-between h-100">
+                            <div>
+                                <h6 class="card-title fw-bold text-dark">@warehouse.Name</h6>
+                                <p class="card-text text-muted small mb-3">
+                                    <i class="bi bi-geo-alt-fill"></i> @warehouse.Location
+                                </p>
+                            </div>
+                            <div class="d-flex flex-column gap-2 mt-auto">
+                                <a asp-controller="Warehouse" asp-action="Stock" asp-route-id="@warehouse.Id"
+                                   class="btn btn-outline-primary rounded-pill fw-bold">
+                                    <i class="bi bi-box-seam"></i> View Stock
+                                </a>
+
+                                <button class="btn btn-primary rounded-pill fw-bold view-details-btn"
+                                        data-warehouse-id="@warehouse.Id"
+                                        data-warehouse-name="@warehouse.Name"
+                                        data-warehouse-location="@warehouse.Location">
+                                    <i class="bi bi-building"></i> View Details
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -58,7 +65,55 @@
     </div>
 </div>
 
+<!-- Warehouse Details Modal -->
+<div class="modal fade" id="warehouseDetailsModal" tabindex="-1" aria-labelledby="warehouseDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title fw-bold" id="warehouseDetailsLabel">Warehouse Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-light text-dark">
+                <div class="p-3" id="warehouseDetailsContent">
+                    <!-- Dynamic warehouse info will be injected here -->
+                </div>
+            </div>
+            <div class="modal-footer bg-white">
+                <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="~/js/warehouses.js"></script>
     <script src="~/js/pagination.js"></script>
+
+    <script>
+        document.querySelectorAll('.view-details-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-warehouse-id');
+                const name = this.getAttribute('data-warehouse-name');
+                const location = this.getAttribute('data-warehouse-location');
+                const manager = this.getAttribute('data-warehouse-manager');
+
+                const mapSrc = `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
+
+                const content = `
+                    <div class="mb-3">
+                        <h4 class="fw-bold">${name}</h4>
+                        <p><strong>ID:</strong> ${id}</p>
+                        <p><strong>Manager:</strong> ${manager}</p>
+                        <p><strong>Location:</strong> ${location}</p>
+                        <div class="ratio ratio-16x9 mt-3">
+                            <iframe src="${mapSrc}" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('warehouseDetailsContent').innerHTML = content;
+                new bootstrap.Modal(document.getElementById('warehouseDetailsModal')).show();
+            });
+        });
+    </script>
 }
