@@ -7,6 +7,8 @@
 
         public string Name { get; set; } = null!;
 
+        public string? ManagerId { get; set; }
+
         public string Location { get; set; } = null!;
     }
 }

@@ -46,7 +46,8 @@
                                 <button class="btn btn-primary rounded-pill fw-bold view-details-btn"
                                         data-warehouse-id="@warehouse.Id"
                                         data-warehouse-name="@warehouse.Name"
-                                        data-warehouse-location="@warehouse.Location">
+                                        data-warehouse-location="@warehouse.Location"
+                                        data-warehouse-manager="@warehouse.ManagerId">
                                     <i class="bi bi-building"></i> View Details
                                 </button>
                             </div>
@@ -102,8 +103,8 @@
                 const content = `
                     <div class="mb-3">
                         <h4 class="fw-bold">${name}</h4>
-                        <p><strong>ID:</strong> ${id}</p>
-                        <p><strong>Manager:</strong> ${manager}</p>
+                        <p><strong>Warehouse Id:</strong> ${id}</p>
+                        <p><strong>Manager Id:</strong> ${manager}</p>
                         <p><strong>Location:</strong> ${location}</p>
                         <div class="ratio ratio-16x9 mt-3">
                             <iframe src="${mapSrc}" style="border:0;" allowfullscreen="" loading="lazy"></iframe>

@@ -24,6 +24,7 @@ namespace ClothingBrand.Services.Core
                     Id = w.Id.ToString(),
                     Name = w.Name,
                     Location = w.Location,
+                    ManagerId = w.ManagerId.ToString(),
                 })
                 .ToListAsync();
 
@@ -39,7 +40,7 @@ namespace ClothingBrand.Services.Core
                     .GetAllAttached()
                     .Where(w => w.Id.ToString().ToLower() == id.ToLower())
                     .Include(w => w.Manager)
-                        .ThenInclude(m => m.User)
+                        .ThenInclude(m => m!.User)
                     .Include(w => w.WarehouseProducts)
                         .ThenInclude(p => p.Gender)
                     .FirstOrDefaultAsync();
