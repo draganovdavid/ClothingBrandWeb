@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClothingBrand.Data\ClothingBrand.Data.csproj" />
+    <ProjectReference Include="..\ClothingBrand.Services.Core\ClothingBrand.Services.Core.csproj" />
+    <ProjectReference Include="..\ClothingBrand.Web.ViewModels\ClothingBrandApp.Web.ViewModels.csproj" />
+    <ProjectReference Include="..\ClothingBrandApp.GCommon\ClothingBrand.GCommon.csproj" />
+    <ProjectReference Include="..\ClothingBrandApp.Web.Infrastructure\ClothingBrandApp.Web.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrand.GCommon", "Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrandApp.Web.Infrastructure", "ClothingBrandApp.Web.Infrastructure\ClothingBrandApp.Web.Infrastructure.csproj", "{B3A8EFB2-AF75-4549-BE45-9D27A79C8634}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClothingBrandApp.WebApi", "ClothingBrandApp.WebApi\ClothingBrandApp.WebApi.csproj", "{C0A79B74-4E3C-4393-8382-7EE41C64BC0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{B3A8EFB2-AF75-4549-BE45-9D27A79C8634}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3A8EFB2-AF75-4549-BE45-9D27A79C8634}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3A8EFB2-AF75-4549-BE45-9D27A79C8634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0A79B74-4E3C-4393-8382-7EE41C64BC0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0A79B74-4E3C-4393-8382-7EE41C64BC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0A79B74-4E3C-4393-8382-7EE41C64BC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0A79B74-4E3C-4393-8382-7EE41C64BC0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{40194B0B-3354-4FFB-92C6-E8D5230CEFDE} = {1233829A-B4DA-4F77-B24F-9E57C837C579}
 		{37F3349D-62E7-4F67-A590-107493928EC9} = {3136DAFB-A394-42B8-862B-9D24F687D031}
 		{B3A8EFB2-AF75-4549-BE45-9D27A79C8634} = {3136DAFB-A394-42B8-862B-9D24F687D031}
+		{C0A79B74-4E3C-4393-8382-7EE41C64BC0B} = {3136DAFB-A394-42B8-862B-9D24F687D031}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {583961D3-0DB9-4977-905D-C523CF0CA6F6}
