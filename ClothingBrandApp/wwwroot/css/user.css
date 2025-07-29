@@ -11,12 +11,6 @@
     background: transparent;
 }
 
-.cinema-bg {
-    background: linear-gradient(to bottom, #1a1a1a, #2c2c2c);
-    min-height: 100vh;
-    padding-bottom: 40px;
-}
-
 .hero-section {
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
                 url('/images/summer-collection.png') center/cover no-repeat;
@@ -46,13 +40,6 @@ h1, .table th {
 .card-title {
     font-weight: bold;
     text-transform: uppercase;
-}
-
-.movie-card-img-top {
-    height: 400px !important;
-    width: 100% !important;
-    object-fit: cover !important;
-    border-radius: 8px 8px 0 0 !important;
 }
 
 #loadMoreBtn {
@@ -95,25 +82,6 @@ h1, .table th {
 
 .btn-secondary:hover {
     background: #5a6268;
-}
-
-.cinema-index-card .btn, .cinema-program-card .btn {
-    background-color: #657791;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    font-weight: bold;
-    transition: background 0.3s ease-in-out, transform 0.2s;
-}
-
-.cinema-index-card .btn:hover, .cinema-program-card .btn:hover {
-    background-color: #57657a;
-    transform: scale(1.05);
-}
-
-.cinema-index-card .btn:active, .cinema-program-card .btn:active {
-    background-color: #8fa8cb;
-    transform: scale(0.98);
 }
 
 .btn-outline-primary {
@@ -163,16 +131,7 @@ thead.bg-primary th {
 .text-warning {
     color: #ffc107;
     font-weight: bold;
-    font-size: 1.1rem;
 }
-
-.tickets-container {
-    background: linear-gradient(to bottom, #1a1a1a, #2c2c2c);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-}
-
 .back-btn {
     background: #6c757d;
     color: white;
