@@ -21,7 +21,7 @@ namespace ClothingBrand.Data.Configuration
 
             entity
                 .HasOne(m => m.User)
-                .WithOne()
+                .WithOne(u => u.Manager)
                 .HasForeignKey<Manager>(m => m.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -35,8 +35,8 @@ namespace ClothingBrand.Data.Configuration
             entity
                 .HasData(new Manager
                 {
-                    Id = Guid.Parse("df1c3a0f-1234-4cde-bb55-d5f15a6aabcd"),
-                    UserId = "df1c3a0f-1234-4cde-bb55-d5f15a6aabcd",
+                    Id = Guid.Parse("080b12b6-84ab-4a23-908c-6f1835b768f9"),
+                    UserId = "a7924356-9a80-4206-963b-e71abcfa6257",
                     IsDeleted = false
                 });
         }

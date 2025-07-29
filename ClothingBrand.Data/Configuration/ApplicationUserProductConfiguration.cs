@@ -20,7 +20,7 @@ namespace ClothingBrand.Data.Configuration
 
             entity
                 .HasOne(e => e.ApplicationUser)
-                .WithMany()
+                .WithMany(u => u.ApplicationUserFavoriteProducts)
                 .HasForeignKey(e => e.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 

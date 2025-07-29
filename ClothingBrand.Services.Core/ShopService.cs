@@ -12,10 +12,10 @@ namespace ClothingBrand.Services.Core
         private readonly IShopRepository shopRepository;
         private readonly ICategoryRepository categoryRepository;
         private readonly IWarehouseRepository warehouseRepository;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<ApplicationUser> userManager;
         
         public ShopService(IShopRepository shopRepository, ICategoryRepository categoryRepository, IWarehouseRepository warehouseRepository, 
-            UserManager<IdentityUser> userManager)
+            UserManager<ApplicationUser> userManager)
         {
             this.shopRepository = shopRepository;
             this.userManager = userManager;
@@ -52,7 +52,7 @@ namespace ClothingBrand.Services.Core
 
         public async Task AddProductAsync(string userId, ProductFormInputModel inputModel)
         {
-            IdentityUser? user = await this.userManager.FindByIdAsync(userId);
+            ApplicationUser? user = await this.userManager.FindByIdAsync(userId);
             Category? category = await this.categoryRepository
                 .FirstOrDefaultAsync(c => c.Id == inputModel.CategoryId);
             Warehouse? warehouse = await this.warehouseRepository

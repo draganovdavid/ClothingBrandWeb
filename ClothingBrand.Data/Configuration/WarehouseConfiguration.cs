@@ -50,18 +50,18 @@ namespace ClothingBrand.Data.Configuration
                 .HasData(new Warehouse
                 {
                     Id = Guid.Parse("af5efb50-807c-4dfd-8178-71c7d6ff7f20"),
-                    Name = "Veliko Turnovo",
+                    Name = "Veliko Turnovo Warehouse",
                     Location = "Veliko Turnovo",
                     IsDeleted = false,
-                    ManagerId = Guid.Parse("df1c3a0f-1234-4cde-bb55-d5f15a6aabcd")
+                    ManagerId = Guid.Parse("080b12b6-84ab-4a23-908c-6f1835b768f9")
                 },
                     new Warehouse
                     {
                         Id = Guid.Parse("5aa828b1-7b16-4cc1-92f6-fa0a89d250da"),
-                        Name = "Sofia",
+                        Name = "Sofia Warehouse",
                         Location = "Sofia",
                         IsDeleted = false,
-                        ManagerId = Guid.Parse("df1c3a0f-1234-4cde-bb55-d5f15a6aabcd")
+                        ManagerId = Guid.Parse("080b12b6-84ab-4a23-908c-6f1835b768f9")
                     }
                 );
         }

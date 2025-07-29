@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace ClothingBrandApp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -20,8 +20,8 @@ namespace ClothingBrandApp.Data
         public virtual DbSet<ApplicationUserShoppingCart> ApplicationUserShoppingCarts { get; set; } = null!;
 
         public virtual DbSet<Manager> Managers { get; set; } = null!;
-
         public virtual DbSet<Warehouse> Warehouses { get; set; } = null!;
+        public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

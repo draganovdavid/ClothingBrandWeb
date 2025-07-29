@@ -5,6 +5,7 @@ using static ClothingBrandApp.Web.Infrastructure.Extensions.WebApplicationExtens
 using static ClothingBrandApp.Web.Infrastructure.Extensions.ServiceCollectionExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using ClothingBrand.Data.Models;
 
 namespace ClothingBrandApp.Web
 {
@@ -25,23 +26,18 @@ namespace ClothingBrandApp.Web
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services
-                .AddDefaultIdentity<IdentityUser>(options =>
+                .AddDefaultIdentity<ApplicationUser>(options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.SignIn.RequireConfirmedAccount = false;
-                    options.SignIn.RequireConfirmedPhoneNumber = false;
-
-                    options.Password.RequiredLength = 3;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequiredUniqueChars = 0;
+                    ConfigureIdentity(builder.Configuration, options);
                 })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddRepositories(typeof(IShopRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IShopService).Assembly);
+
+            //// TODO: Implement as extension method
+            //builder.Services.AddTransient<IIdentitySeeder, IdentitySeeder>();
 
             builder.Services.AddControllersWithViews();
 
@@ -70,12 +66,40 @@ namespace ClothingBrandApp.Web
             app.UseAuthorization();
             app.UseManagerAccessRestriction();
 
+            //app.UserAdminRedirection();
+
+            app.MapControllerRoute(
+                name: "areas",
+                pattern: "{area}/{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
 
             app.Run();
+        }
+
+        private static void ConfigureIdentity(IConfigurationManager configurationManager, IdentityOptions identityOptions)
+        {
+            identityOptions.SignIn.RequireConfirmedEmail =
+                configurationManager.GetValue<bool>($"IdentityConfig:SignIn:RequireConfirmedEmail");
+            identityOptions.SignIn.RequireConfirmedAccount =
+                configurationManager.GetValue<bool>($"IdentityConfig:SignIn:RequireConfirmedAccount");
+            identityOptions.SignIn.RequireConfirmedPhoneNumber =
+                configurationManager.GetValue<bool>($"IdentityConfig:SignIn:RequireConfirmedPhoneNumber");
+
+            identityOptions.Password.RequiredLength =
+                configurationManager.GetValue<int>($"IdentityConfig:Password:RequiredLength");
+            identityOptions.Password.RequireNonAlphanumeric =
+                configurationManager.GetValue<bool>($"IdentityConfig:Password:RequireNonAlphanumeric");
+            identityOptions.Password.RequireDigit =
+                configurationManager.GetValue<bool>($"IdentityConfig:Password:RequireDigit");
+            identityOptions.Password.RequireLowercase =
+                configurationManager.GetValue<bool>($"IdentityConfig:Password:RequireLowercase");
+            identityOptions.Password.RequireUppercase =
+                configurationManager.GetValue<bool>($"IdentityConfig:Password:RequireUppercase");
+            identityOptions.Password.RequiredUniqueChars =
+                configurationManager.GetValue<int>($"IdentityConfig:Password:RequiredUniqueChars");
         }
     }
 }

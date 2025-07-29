@@ -11,7 +11,7 @@ namespace ClothingBrand.Data.Models
 
         [Comment("Manager's user entity")]
         public string UserId { get; set; } = null!;
-        public virtual IdentityUser User { get; set; } = null!;
+        public virtual ApplicationUser User { get; set; } = null!;
 
         public bool IsDeleted { get; set; }
 
