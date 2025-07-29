@@ -1,8 +1,10 @@
+using ClothingBrand.Data.Models;
 using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 using static ClothingBrandApp.Web.Infrastructure.Extensions.ServiceCollectionExtensions;
 
@@ -21,12 +23,24 @@ namespace ClothingBrandApp.WebApi
                 options.UseSqlServer(connectionString);
             });
             builder.Services.AddAuthorization();
-            builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+            builder.Services.AddIdentityApiEndpoints<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddRepositories(typeof(IShopRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IShopService).Assembly);
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(AllowAllDomainsPolicy, policyBuilder =>
+                {
+                    policyBuilder
+                        .WithOrigins("https://localhost:7180")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
+                });
+            });
 
             builder.Services.AddControllers();
 
@@ -47,7 +61,7 @@ namespace ClothingBrandApp.WebApi
 
             app.UseAuthorization();
 
-            app.MapIdentityApi<IdentityUser>();
+            app.MapIdentityApi<ApplicationUser>();
             app.MapControllers();
 
             app.Run();
