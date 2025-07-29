@@ -1,11 +1,13 @@
 using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Data;
-using static ClothingBrandApp.Web.Infrastructure.Extensions.WebApplicationExtensions;
-using static ClothingBrandApp.Web.Infrastructure.Extensions.ServiceCollectionExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ClothingBrand.Data.Models;
+using ClothingBrand.Data.Seeding.Interfaces;
+using ClothingBrand.Data.Seeding;
+using static ClothingBrandApp.Web.Infrastructure.Extensions.WebApplicationExtensions;
+using static ClothingBrandApp.Web.Infrastructure.Extensions.ServiceCollectionExtensions;
 
 namespace ClothingBrandApp.Web
 {
@@ -36,8 +38,8 @@ namespace ClothingBrandApp.Web
             builder.Services.AddRepositories(typeof(IShopRepository).Assembly);
             builder.Services.AddUserDefinedServices(typeof(IShopService).Assembly);
 
-            //// TODO: Implement as extension method
-            //builder.Services.AddTransient<IIdentitySeeder, IdentitySeeder>();
+            // TODO: Implement as extension method
+            builder.Services.AddTransient<IIdentitySeeder, IdentitySeeder>();
 
             builder.Services.AddControllersWithViews();
 
@@ -62,11 +64,13 @@ namespace ClothingBrandApp.Web
 
             app.UseRouting();
 
+            app.SeedDefaultIdentity();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseManagerAccessRestriction();
 
-            //app.UserAdminRedirection();
+            app.UserAdminRedirection();
 
             app.MapControllerRoute(
                 name: "areas",

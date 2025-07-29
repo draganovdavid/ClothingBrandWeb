@@ -26,4 +26,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Seeding\Dtos\" />
+    <Folder Include="Seeding\Input\" />
+    <Folder Include="Seeding\Utilities\" />
+  </ItemGroup>
+
 </Project>
