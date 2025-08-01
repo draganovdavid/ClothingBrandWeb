@@ -5,6 +5,7 @@ using System.Security.Claims;
 namespace ClothingBrandApp.Web.Controllers
 {
     [Authorize]
+    [AutoValidateAntiforgeryToken]
     public abstract class BaseController : Controller
     {
         protected bool IsUserAuthenticated()
