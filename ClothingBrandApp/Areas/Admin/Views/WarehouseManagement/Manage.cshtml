@@ -1,0 +1,70 @@
+﻿@using ClothingBrandApp.Web.ViewModels.Admin.WarehouseManagement
+@model IEnumerable<WarehouseManagementIndexViewModel>
+
+@{
+    ViewData["Title"] = "Manage Warehouses";
+}
+
+<div class="container mt-4">
+    <h1 class="text-center text-warning fw-bold">Manage Warehouses</h1>
+    <p class="text-center text-bright">View, edit, or delete warehouse entries.</p>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="btn btn-secondary fw-bold">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <a asp-action="Create" class="btn btn-success fw-bold shadow-lg">
+            <i class="bi bi-plus-circle"></i> Add New Warehouse
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-exclamation-circle"></i> No warehouses available. Click "Add New Warehouse" to create one.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-dark table-hover shadow-lg rounded-3">
+                <thead>
+                    <tr class="text-warning text-center bg-dark">
+                        <th scope="col" class="text-warning">Name</th>
+                        <th scope="col" class="text-warning">Location</th>
+                        <th scope="col" class="text-warning">Manager</th>
+                        <th scope="col" class="text-warning">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (WarehouseManagementIndexViewModel warehouse in Model)
+                    {
+                        <tr class="align-middle text-center @(warehouse.IsDeleted ? "table-danger" : "")">
+                            <td class="fw-bold">
+                                @warehouse.Name
+                                @if (warehouse.IsDeleted)
+                                {
+                                    <span class="badge bg-danger ms-2">Deleted</span>
+                                }
+                            </td>
+                            <td>@warehouse.Location</td>
+                            <td>@warehouse.ManagerName</td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Edit" asp-route-id="@warehouse.Id" class="btn btn-primary btn-sm fw-bold">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+
+                                    <a asp-action="ToggleDelete" asp-route-id="@warehouse.Id" class="btn @(warehouse.IsDeleted ? "btn-warning" : "btn-danger") btn-sm fw-bold">
+                                        <i class="bi @(warehouse.IsDeleted ? "bi-arrow-clockwise" : "bi-trash")"></i>
+                                        @(warehouse.IsDeleted ? "Restore" : "Delete")
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
