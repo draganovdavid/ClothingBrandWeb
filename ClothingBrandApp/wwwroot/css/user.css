@@ -1,46 +1,42 @@
 ﻿html, body {
     background-color: #4a4a4a;
-    color: #fff;
+    color: white;
     min-height: 100vh;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
 }
 
 .container {
-    background: transparent;
+    background: transparent !important;
 }
 
-.hero-section {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-                url('/images/summer-collection.png') center/cover no-repeat;
-    height: 50vh;
-    border-radius: 12px;
-    position: relative;
+.cinema-bg {
+    background: linear-gradient(to bottom, #1a1a1a, #2c2c2c);
+    min-height: 100vh;
+    padding-bottom: 40px;
 }
 
-h1, label, .section-title {
+h1, label {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
-h1, .table th {
-    color: #fff;
+h1, .table th:not(.text-warning) {
+    color: white !important;
+}
+
+.text-bright {
+    color: #f0f0f0;
+    font-weight: 500;
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    transition: transform 0.2s;
+    background: rgba(255, 255, 255, 0.85);
+    transition: transform 0.2s ease-in-out;
 }
 
-.card:hover {
-    transform: scale(1.03);
-}
-
-.card-title {
-    font-weight: bold;
-    text-transform: uppercase;
-}
+    .card:hover {
+        transform: scale(1.05);
+    }
 
 #loadMoreBtn {
     background: #ff4d4d;
@@ -48,90 +44,52 @@ h1, .table th {
     transition: background 0.3s ease-in-out;
 }
 
-#loadMoreBtn:hover {
-    background: #e63946;
-}
-
-.btn-outline-light,
-.btn-outline-primary,
-.btn-outline-warning,
-.btn-secondary {
-    font-weight: bold;
-    border-radius: 20px;
-    transition: background 0.3s, transform 0.2s;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.btn-outline-light {
-    background: transparent;
-    color: #fff;
-    border: 2px solid #fff;
-}
-
-.btn-outline-light:hover {
-    background: #fff;
-    color: #4a4a4a;
-    transform: scale(1.05);
-}
+    #loadMoreBtn:hover {
+        background: #e63946;
+    }
 
 .btn-secondary {
     background: #6c757d;
-    color: #fff;
     border: none;
+    transition: background 0.3s ease-in-out;
 }
 
-.btn-secondary:hover {
-    background: #5a6268;
-}
-
-.btn-outline-primary {
-    background: #007bff;
-    color: #fff;
-    border: 2px solid #007bff;
-}
-
-.btn-outline-primary:hover {
-    background: #0056b3;
-    border-color: #0056b3;
-    transform: scale(1.05);
-}
-
-.btn-outline-warning {
-    background: #ffc107;
-    color: #fff;
-    border: 2px solid #ffc107;
-}
-
-.btn-outline-warning:hover {
-    background: #e0a800;
-    border-color: #e0a800;
-    transform: scale(1.05);
-}
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
 
 .table-dark {
-    background-color: #222;
+    background-color: #222 !important;
     border-radius: 8px;
 }
 
 thead.bg-primary th {
     font-weight: bold;
     text-transform: uppercase;
-    background-color: #004085;
+    background-color: #004085 !important;
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-    background-color: #2c2c2c;
+    background-color: #2c2c2c !important;
 }
 
 .text-success {
-    color: #28a745;
     font-weight: bold;
+    color: #28a745 !important;
 }
 
 .text-warning {
-    color: #ffc107;
     font-weight: bold;
+    color: #ffc107 !important;
 }
+
+.tickets-container {
+    background: linear-gradient(to bottom, #1a1a1a, #2c2c2c);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
 .back-btn {
     background: #6c757d;
     color: white;
@@ -139,6 +97,53 @@ thead.bg-primary th {
     transition: background 0.3s ease-in-out;
 }
 
-.back-btn:hover {
-    background: #5a6268;
+    .back-btn:hover {
+        background: #5a6268;
+    }
+
+.btn-outline-primary {
+    border: 2px solid #007bff !important;
+    color: #ffffff !important;
+    background-color: #007bff !important;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, transform 0.2s;
 }
+
+    .btn-outline-primary:hover {
+        background-color: #0056b3 !important;
+        border-color: #0056b3 !important;
+        transform: scale(1.05);
+    }
+
+.btn-outline-warning {
+    border: 2px solid #ffc107 !important;
+    color: #ffffff !important;
+    background-color: #ffc107 !important;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out, transform 0.2s;
+}
+
+    .btn-outline-warning:hover {
+        background-color: #e0a800 !important;
+        border-color: #e0a800 !important;
+        transform: scale(1.05);
+    }
+
+.showtime-box {
+    display: inline-block;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    letter-spacing: 1px;
+    transition: transform 0.2s ease-in-out;
+}
+
+    .showtime-box:hover {
+        transform: scale(1.05);
+        background-color: #34495e;
+    }
