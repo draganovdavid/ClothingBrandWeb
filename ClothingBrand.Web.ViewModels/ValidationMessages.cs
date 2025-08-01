@@ -38,7 +38,13 @@
 
         public static class Warehouse
         {
-            public const string WarehouseRequiredMessage = "Warehouse name is required";
+            public const string WarehouseRequiredMessage = "Warehouse name is required.";
+            public const string WarehouseMinLengthMessage = "Warehouse name must be at least 2 characters.";
+            public const string WarehouseMaxLengthMessage = "Warehouse name cannot exceed 100 characters.";
+
+            public const string WarehouseLocationRequiredMessage = "Warehouse location is required.";
+            public const string WarehouseLocationMinLengthMessage = "Warehouse location must be at least 2 characters.";
+            public const string WarehouseLocationMaxLengthMessage = "Warehouse location cannot exceed 50 characters.";
         }
     }
 }

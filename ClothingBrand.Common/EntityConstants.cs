@@ -84,6 +84,8 @@
         {
             public const int NameMaxLength = 100;
 
+            public const int NameMinLength = 2;
+
             public const int LocationMaxLength = 200;
         }
     }
