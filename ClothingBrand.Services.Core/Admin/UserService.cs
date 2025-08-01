@@ -39,5 +39,45 @@ namespace ClothingBrand.Services.Core.Admin
             return users;
         }
 
+        public async Task<IEnumerable<string>> GetManagerEmailsAsync()
+        {
+            IEnumerable<string> managerEmails = await this.managerRepository
+                .GetAllAttached()
+                .Where(m => m.User.UserName != null)
+                .Select(m => (string)m.User.UserName!)
+                .ToArrayAsync();
+
+            return managerEmails;
+        }
+
+        public async Task<bool> AssignUserToRoleAsync(RoleSelectionInputModel inputModel)
+        {
+            ApplicationUser? user = await this.userManager
+                .FindByIdAsync(inputModel.UserId);
+
+            if (user == null)
+            {
+                throw new ArgumentException("User does not exist!");
+            }
+
+            bool roleExists = await this.roleManager.RoleExistsAsync(inputModel.Role);
+            if (!roleExists)
+            {
+                throw new ArgumentException("Selected role is not a valid role!");
+            }
+
+            try
+            {
+                await this.userManager.AddToRoleAsync(user, inputModel.Role);
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentException(
+                    "Unexpected error occurred while adding the user to role! Please try again later!",
+                    innerException: e);
+            }
+        }
     }
 }
