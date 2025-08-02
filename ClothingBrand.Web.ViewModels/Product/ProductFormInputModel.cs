@@ -35,7 +35,7 @@ namespace ClothingBrandApp.Web.ViewModels.Product
         [MaxLength(DescriptionMaxLength, ErrorMessage = DescriptionMaxLengthMessage)]
         public string Description { get; set; } = null!;
 
-        [Required(ErrorMessage = WarehouseRequiredMessage)]
+        [Required(ErrorMessage = WarehouseNameRequiredMessage)]
         public string WarehouseName { get; set; } = null!;
 
         [MaxLength(ImageUrlMaxLength, ErrorMessage = ImageUrlMaxLengthMessage)]
