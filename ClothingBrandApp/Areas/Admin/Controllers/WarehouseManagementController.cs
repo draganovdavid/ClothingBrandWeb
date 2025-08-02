@@ -2,6 +2,8 @@
 using ClothingBrandApp.Web.ViewModels.Admin.WarehouseManagement;
 using Microsoft.AspNetCore.Mvc;
 
+using static ClothingBrandApp.GCommon.ApplicationConstants;
+
 namespace ClothingBrandApp.Web.Areas.Admin.Controllers
 {
     public class WarehouseManagementController : BaseAdminController
@@ -50,15 +52,19 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
 
                 if (!success)
                 {
-                    return this.BadRequest();
+                    TempData[ErrorMessageKey] = "Error occurred while adding the warehouse! Ensure to select a valid manager!";
+                }
+                else
+                {
+                    TempData[SuccessMessageKey] = "Warehouse created successfully!";
                 }
 
                 return this.RedirectToAction(nameof(Manage));
             }
             catch (Exception)
             {
-
-                throw;
+                TempData[ErrorMessageKey] = "Unexpected error occurred while adding the warehouse! Please contact developer team!";
+                return this.RedirectToAction(nameof(Manage));
             }
         }
     }
