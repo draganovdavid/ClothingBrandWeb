@@ -29,7 +29,7 @@ namespace ClothingBrand.Services.Core.Admin
                 .Select(u => new UserManagementIndexViewModel
                 {
                     Id = u.Id,
-                    Email = u.Email,
+                    Email = u.Email!,
                     Roles = userManager.GetRolesAsync(u)
                         .GetAwaiter()
                         .GetResult()
