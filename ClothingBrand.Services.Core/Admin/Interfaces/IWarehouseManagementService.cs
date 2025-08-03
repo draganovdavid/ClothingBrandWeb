@@ -7,5 +7,10 @@ namespace ClothingBrand.Services.Core.Admin.Interfaces
         Task<IEnumerable<WarehouseManagementIndexViewModel>> GetWarehouseManagementBoardDataAsync();
 
         Task<bool> AddWarehouseAsync(WarehouseManagementAddFormModel? inputModel);
+
+        Task<WarehouseManagementEditFormModel?> GetWarehouseEditFormModelAsync(string? id);
+
+        Task<bool> EditWarehouseAsync(WarehouseManagementEditFormModel? inputModel);
+
     }
 }

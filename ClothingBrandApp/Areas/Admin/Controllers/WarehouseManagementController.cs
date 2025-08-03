@@ -67,5 +67,55 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
                 return this.RedirectToAction(nameof(Manage));
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(string? id)
+        {
+            WarehouseManagementEditFormModel? editFormModel = await this.warehouseManagementService
+                .GetWarehouseEditFormModelAsync(id);
+            if (editFormModel == null)
+            {
+                TempData[ErrorMessageKey] = "Selected Warehouse does not exist!";
+
+                return this.RedirectToAction(nameof(Manage));
+            }
+
+            editFormModel.AppManagerEmails = await this.userService
+                .GetManagerEmailsAsync();
+
+            return this.View(editFormModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(WarehouseManagementEditFormModel inputModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return this.View(inputModel);
+            }
+
+            try
+            {
+                bool success = await this.warehouseManagementService
+                    .EditWarehouseAsync(inputModel);
+
+                if (!success)
+                {
+                    TempData[ErrorMessageKey] = "Error occurred while updating the warehouse! Ensure to select a valid manager!";
+                }
+                else
+                {
+                    TempData[SuccessMessageKey] = "Warehouse updated successfully!";
+                }
+
+                return this.RedirectToAction(nameof(Manage));
+            }
+            catch (Exception)
+            {
+                TempData[ErrorMessageKey] = "Unexpected error occurred while editing the warehouse! Please contact developer team!";
+                return this.RedirectToAction(nameof(Manage));
+            }
+        }
+
     }
 }

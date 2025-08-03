@@ -70,5 +70,67 @@ namespace ClothingBrand.Services.Core.Admin
 
             return result;
         }
+
+        public async Task<WarehouseManagementEditFormModel?> GetWarehouseEditFormModelAsync(string? id)
+        {
+            WarehouseManagementEditFormModel? formModel = null;
+
+            if (!String.IsNullOrWhiteSpace(id))
+            {
+                Warehouse? warehouseToEdit = await this.warehouseRepository
+                    .GetAllAttached()
+                    .Include(w => w.Manager)
+                    .ThenInclude(m => m!.User)
+                    .IgnoreQueryFilters()
+                    .SingleOrDefaultAsync(w => w.Id.ToString().ToLower() == id.ToLower());
+
+                if (warehouseToEdit != null)
+                {
+                    formModel = new WarehouseManagementEditFormModel()
+                    {
+                        Id = warehouseToEdit.Id.ToString(),
+                        Name = warehouseToEdit.Name,
+                        Location = warehouseToEdit.Location,
+                        ManagerEmail = warehouseToEdit.Manager != null ?
+                            warehouseToEdit.Manager.User.Email ?? string.Empty : string.Empty
+                    };
+                }
+            }
+
+            return formModel;
+        }
+
+        public async Task<bool> EditWarehouseAsync(WarehouseManagementEditFormModel? inputModel)
+        {
+            bool result = false;
+            if (inputModel == null)
+            {
+                return result;
+            }
+
+            ApplicationUser? managerUser = await this.userManager
+                .FindByNameAsync(inputModel.ManagerEmail);
+            if (managerUser == null)
+            {
+                return result;
+            }
+
+            Manager? manager = await this.managerRepository
+                    .GetAllAttached()
+                    .SingleOrDefaultAsync(m => m.UserId.ToLower().ToString() == managerUser.Id.ToLower().ToString());
+            Warehouse? warehouseToEdit = await this.warehouseRepository
+                    .SingleOrDefaultAsync(w => w.Id.ToString().ToLower() == inputModel.Id.ToLower());
+
+            if (manager != null && warehouseToEdit != null)
+            {
+                warehouseToEdit.Name = inputModel.Name;
+                warehouseToEdit.Location = inputModel.Location;
+                warehouseToEdit.Manager = manager;
+
+                result = await this.warehouseRepository.UpdateAsync(warehouseToEdit);
+            }
+
+            return result;
+        }
     }
 }
