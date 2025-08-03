@@ -132,5 +132,31 @@ namespace ClothingBrand.Services.Core.Admin
 
             return result;
         }
+
+        public async Task<Tuple<bool, bool>> DeleteOrRestoreWarehouseAsync(string? id)
+        {
+            bool result = false;
+            bool isRestored = false;
+            if (!String.IsNullOrWhiteSpace(id))
+            {
+                Warehouse? warehouse = await this.warehouseRepository
+                    .GetAllAttached()
+                    .IgnoreQueryFilters()
+                    .SingleOrDefaultAsync(w => w.Id.ToString().ToLower() == id.ToLower());
+
+                if (warehouse != null)
+                {
+                    if (warehouse.IsDeleted)
+                    {
+                        isRestored = true;
+                    }
+                    warehouse.IsDeleted = !warehouse.IsDeleted;
+
+                    result = await this.warehouseRepository.UpdateAsync(warehouse);
+                }
+            }
+
+            return new Tuple<bool, bool>(result, isRestored);
+        }
     }
 }

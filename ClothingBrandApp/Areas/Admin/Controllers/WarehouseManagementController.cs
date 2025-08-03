@@ -117,5 +117,25 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ToggleDelete(string? id)
+        {
+            Tuple<bool, bool> opResult = await this.warehouseManagementService
+                .DeleteOrRestoreWarehouseAsync(id);
+            bool success = opResult.Item1;
+            bool isRestored = opResult.Item2;
+            if (!success)
+            {
+                TempData[ErrorMessageKey] = "Warehouse could not be found and updated!";
+            }
+            else
+            {
+                string operation = isRestored ? "restored" : "deleted";
+
+                TempData[SuccessMessageKey] = $"Warehouse {operation} successfully!";
+            }
+
+            return this.RedirectToAction(nameof(Manage));
+        }
     }
 }

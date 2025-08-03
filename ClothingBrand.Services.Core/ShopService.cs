@@ -27,6 +27,7 @@ namespace ClothingBrand.Services.Core
         {
             IEnumerable<ProductIndexViewModel> allProducts = await this.shopRepository
                 .GetAllAttached()
+                .Where(p => p.Warehouse.IsDeleted == false)
                 .AsNoTracking()
                 .Select(p => new ProductIndexViewModel()
                 {
