@@ -91,11 +91,6 @@
 						@if (User?.Identity?.IsAuthenticated ?? false)
 						{
 							<li class="nav-item">
-								<a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="Add">
-									<i class="bi bi-plus-circle"></i> Add Product
-								</a>
-							</li>
-							<li class="nav-item">
 								<a class="nav-link text-light" asp-area="" asp-controller="Favorite" asp-action="Index">
 									<i class="bi bi-heart"></i> Favorites
 								</a>
@@ -105,12 +100,41 @@
 									<i class="bi bi-cart"></i> Shopping Cart
 								</a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link text-light" asp-area="" asp-controller="Warehouse" asp-action="Index">
-									<i class="bi bi-box-seam"></i> Warehouses
+							@if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+							{
+								<li class="nav-item">
+									<a class="nav-link text-light" asp-area="" asp-controller="Warehouse" asp-action="Index">
+										<i class="bi bi-box-seam"></i> Warehouses
 
-								</a>
-							</li>
+									</a>
+								</li>
+							}
+							@if (User.IsInRole("Admin"))
+							{
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle text-light fw-bold" href="#" id="manageDropdown"
+									   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+										<i class="bi bi-gear-fill"></i> Admin
+									</a>
+									<ul class="dropdown-menu dropdown-menu-dark border-0">
+										<li>
+											<a class="dropdown-item" asp-area="Admin" asp-controller="UserManagement" asp-action="Index">
+												<i class="bi bi-people-fill"></i> Manage Users
+											</a>
+										</li>
+										<li>
+											<a class="dropdown-item" asp-area="Admin" asp-controller="WarehouseManagement" asp-action="Manage">
+												<i class="bi bi-box-seam"></i> Manage Warehouses
+											</a>
+										</li>
+										<li>
+											<a class="dropdown-item" asp-area="Admin" asp-controller="ProductManagement" asp-action="Manage">
+												<i class="bi bi-bag-check-fill"></i> Manage Products
+											</a>
+										</li>
+									</ul>
+								</li>
+							}
 						}
 
 					</ul>  

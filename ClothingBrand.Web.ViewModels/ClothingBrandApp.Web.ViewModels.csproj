@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClothingBrand.Common\ClothingBrand.Data.Common.csproj" />
+    <ProjectReference Include="..\ClothingBrand.Models\ClothingBrand.Data.Models.csproj" />
     <ProjectReference Include="..\ClothingBrandApp.GCommon\ClothingBrand.GCommon.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
-﻿using ClothingBrandApp.Web.ViewModels.Product;
+﻿using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement;
+using ClothingBrandApp.Web.ViewModels.Product;
 
 namespace ClothingBrand.Services.Core.Interfaces
 {
@@ -6,20 +7,18 @@ namespace ClothingBrand.Services.Core.Interfaces
     {
         Task<IEnumerable<ProductIndexViewModel>> GetAllProductsAsync();
 
-        Task AddProductAsync(string userId, ProductFormInputModel inputModel);
+        Task AddProductAsync(ProductFormInputModel inputModel);
 
         Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(Guid? id);
 
         Task<ProductFormInputModel?> GetProductForEditingAsync(Guid? productId);
 
-        Task<bool> EditProductAsync(string userId, ProductFormInputModel inputModel);
+        Task<bool> EditProductAsync(ProductFormInputModel inputModel);
 
-        Task<ProductDeleteInputModel?> GetProductForDeleteAsync(Guid? productId);
+        Task<bool> SoftDeleteProductAsync(string? id);
 
-        Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel);
-
+        Task<bool> DeleteProductAsync(string? id);
 
         Task<IEnumerable<ProductIndexViewModel>> GetProductsByGenderAsync(string genderName);
-
     }
 }

@@ -1,6 +1,6 @@
-﻿using ClothingBrand.Services.Core;
-using ClothingBrand.Services.Core.Interfaces;
+﻿using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.Controllers;
+using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,45 +44,6 @@ namespace ClothingBrand.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Add()
-        {
-            try
-            {
-                ProductFormInputModel inputModel = new ProductFormInputModel()
-                {
-                    Categories = await this.categoryService.GetAllCategoriesDropDownAsync()
-                };
-                return this.View(inputModel);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Add(ProductFormInputModel inputModel)
-        {
-            if (!this.ModelState.IsValid)
-            {
-                return this.View(inputModel);
-            }
-
-            try
-            {
-                await this.shopService.AddProductAsync(this.GetUserId()!, inputModel);
-
-                return this.RedirectToAction(nameof(Index));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpGet]
         [AllowAnonymous]
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -105,122 +66,6 @@ namespace ClothingBrand.Web.Controllers
                 }
 
                 return this.View(movieDetails);
-            }
-            catch (Exception e)
-            {
-                // TODO: Implement it with the ILogger
-                // TODO: Add JS bars to indicate such errors
-                Console.WriteLine(e.Message);
-
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            try
-            {
-                ProductFormInputModel? editInputModel = await this.shopService
-                    .GetProductForEditingAsync(id);
-                if (editInputModel == null)
-                {
-                    // TODO: Custom 404 page
-                    return this.RedirectToAction(nameof(Index));
-                }
-
-                editInputModel.Categories = await this.categoryService
-                    .GetAllCategoriesDropDownAsync();
-
-                return this.View(editInputModel);
-            }
-            catch (Exception e)
-            {
-                // TODO: Implement it with the ILogger
-                // TODO: Add JS bars to indicate such errors
-                Console.WriteLine(e.Message);
-
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(ProductFormInputModel inputModel)
-        {
-            try
-            {
-                if (!this.ModelState.IsValid)
-                {
-                    return this.View(inputModel);
-                }
-
-                bool editResult = await this.shopService
-                    .EditProductAsync(this.GetUserId()!, inputModel);
-                if (!editResult)
-                {
-                    this.ModelState.AddModelError(string.Empty, ServiceCreateErrorMessage);
-                    return this.View(inputModel);
-                }
-
-                return this.RedirectToAction(nameof(Details), new { id = inputModel.Id });
-            }
-            catch (Exception e)
-            {
-                // TODO: Implement it with the ILogger
-                // TODO: Add JS bars to indicate such errors
-                Console.WriteLine(e.Message);
-
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            try
-            {
-                ProductDeleteInputModel? deleteInputModel = await this.shopService
-                    .GetProductForDeleteAsync(id);
-                if (deleteInputModel == null)
-                {
-                    // TODO: Custom 404 page
-                    return this.RedirectToAction(nameof(Index));
-                }
-
-                return this.View(deleteInputModel);
-            }
-            catch (Exception e)
-            {
-                // TODO: Implement it with the ILogger
-                // TODO: Add JS bars to indicate such errors
-                Console.WriteLine(e.Message);
-
-                return this.RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Delete(ProductDeleteInputModel inputModel)
-        {
-            try
-            {
-                if (!this.ModelState.IsValid)
-                {
-                    //ModelState.AddModelError(string.Empty, "Please do not modify the page!");
-                    ModelState.AddModelError(string.Empty, "Product not found or already deleted.");
-                    return View(inputModel);
-                }
-
-                bool deleteResult = await this.shopService
-                    .SoftDeleteAsync(inputModel);
-                if (!deleteResult)
-                {
-                    this.ModelState.AddModelError(string.Empty, "A fatal error occurred while deleting your product! Please try again later!");
-                    // Fix
-                    return View(inputModel);
-                }
-
-                return this.RedirectToAction(nameof(Index));
             }
             catch (Exception e)
             {

@@ -172,15 +172,6 @@
 				<a asp-action="Index" asp-controller="Shop" class="btn btn-back-bright rounded-pill px-4 fw-bold">
 					<i class="fas fa-arrow-left"></i> Back to Shop
 				</a>
-				@if (User.Identity?.IsAuthenticated ?? false)
-				{
-					<a asp-controller="Shop" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info rounded-pill px-4 fw-bold text-white ms-2">
-						<i class="fas fa-pen"></i> Edit
-					</a>
-					<a asp-controller="Shop" asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger rounded-pill px-4 fw-bold text-white ms-2">
-						<i class="fas fa-trash"></i> Delete
-					</a>
-				}
 			</div>
 		</div>
 	</div>

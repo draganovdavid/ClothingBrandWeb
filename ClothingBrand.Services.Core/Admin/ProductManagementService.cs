@@ -1,4 +1,5 @@
-﻿using ClothingBrand.Data.Repository.Interfaces;
+﻿using ClothingBrand.Data.Models;
+using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Admin.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,32 @@ namespace ClothingBrand.Services.Core.Admin
                 .ToListAsync();
 
             return allProducts;
+        }
+
+        public async Task<Tuple<bool, bool>> DeleteOrRestoreProductAsync(string? id)
+        {
+            bool result = false;
+            bool isRestored = false;
+            if (!String.IsNullOrWhiteSpace(id))
+            {
+                Product? product = await this.shopRepository
+                    .GetAllAttached()
+                    .IgnoreQueryFilters()
+                    .SingleOrDefaultAsync(p => p.Id.ToString().ToLower() == id.ToLower());
+
+                if (product != null)
+                {
+                    if (product.IsDeleted)
+                    {
+                        isRestored = true;
+                    }
+                    product.IsDeleted = !product.IsDeleted;
+
+                    result = await this.shopRepository.UpdateAsync(product);
+                }
+            }
+
+            return new Tuple<bool, bool>(result, isRestored);
         }
     }
 }

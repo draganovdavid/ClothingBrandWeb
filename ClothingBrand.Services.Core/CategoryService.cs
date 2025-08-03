@@ -1,26 +1,25 @@
-﻿using ClothingBrand.Data.Repository.Interfaces;
+﻿using ClothingBrand.Data.Models;
+using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
-using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Services.Core
 {
     public class CategoryService : ICategoryService
     {
-        private readonly ICategoryRepository categoyRepository;
+        private readonly ICategoryRepository categoryRepository;
 
         public CategoryService(ICategoryRepository categoyRepository)
         {
-            this.categoyRepository = categoyRepository;
+            this.categoryRepository = categoyRepository;
         }
 
-        public async Task<IEnumerable<AddProductCatgoryDropDownModel>> GetAllCategoriesDropDownAsync()
+        public async Task<IEnumerable<Category>> GetAllCategoriesDropDownAsync()
         {
-            IEnumerable<AddProductCatgoryDropDownModel> categoriesAsDropDown = await
-                this.categoyRepository
+            IEnumerable<Category> categoriesAsDropDown = await this.categoryRepository
                 .GetAllAttached()
                 .AsNoTracking()
-                .Select(c => new AddProductCatgoryDropDownModel()
+                .Select(c => new Category()
                 {
                     Id = c.Id,
                     Name = c.Name

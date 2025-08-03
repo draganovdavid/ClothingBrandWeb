@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ClothingBrand.Data.Models;
+using ClothingBrandApp.Web.ViewModels.Warehouse;
+using System.ComponentModel.DataAnnotations;
 using static ClothingBrand.Data.Common.EntityConstants.Product;
 using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Product;
 using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Warehouse;
 
-namespace ClothingBrandApp.Web.ViewModels.Product
+namespace ClothingBrandApp.Web.ViewModels.Admin.ProductManagement
 {
     public class ProductFormInputModel
     {
@@ -15,8 +17,8 @@ namespace ClothingBrandApp.Web.ViewModels.Product
         public string Name { get; set; } = null!;
 
         [Required(ErrorMessage = CategoryRequiredMessage)]
-        public int CategoryId { get; set; }
-        public IEnumerable<AddProductCatgoryDropDownModel>? Categories { get; set; }
+        public string CategoryName { get; set; } = null!;
+        public IEnumerable<Category>? Categories { get; set; }
 
         [Required(ErrorMessage = GenderRequiredMessage)]
         public string Gender { get; set; } = null!;
@@ -37,6 +39,7 @@ namespace ClothingBrandApp.Web.ViewModels.Product
 
         [Required(ErrorMessage = WarehouseNameRequiredMessage)]
         public string WarehouseName { get; set; } = null!;
+        public IEnumerable<WarehouseDropDownModel>? Warehouses { get; set; }
 
         [MaxLength(ImageUrlMaxLength, ErrorMessage = ImageUrlMaxLengthMessage)]
         public string? ImageUrl { get; set; }

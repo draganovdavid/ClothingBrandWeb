@@ -1,45 +1,52 @@
-﻿@using static ClothingBrandApp.GCommon.ApplicationConstants;
-@model ClothingBrandApp.Web.ViewModels.Product.ProductFormInputModel
+﻿@model ClothingBrandApp.Web.ViewModels.Admin.ProductManagement.ProductFormInputModel
 
 @{
-    ViewData["Title"] = "Add New Product";
-    
+    ViewData["Title"] = "Edit Product";
+
     var sizes = new List<string> { "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL" };
+    var genders = new List<string> { "Men", "Women", "Kids" };
 }
 
 <div class="container mt-5">
-    <h2 class="text-center text-warning fw-bold">Add New Product</h2>
-    <hr class="mb-4">
+    <h2 class="text-center text-warning fw-bold">@ViewData["Title"]</h2>
+    <hr class="mb-4" />
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form asp-controller="Shop" asp-action="Add" method="post" class="bg-dark text-light p-4 rounded shadow-lg">
-                
+            <form asp-controller="ProductManagement" asp-action="Edit" method="post" class="bg-dark text-light p-4 rounded shadow-lg">
+                <input type="hidden" asp-for="Id" />
+
+                <!-- Name -->
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label fw-bold">Product Name</label>
-                    <input asp-for="Name" class="form-control" placeholder="Enter product name" autocomplete="off">
+                    <input asp-for="Name" class="form-control" placeholder="Enter product name" autocomplete="off" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
+                <!-- Category -->
                 <div class="mb-3">
-                    <label asp-for="CategoryId" class="form-label fw-bold">Category</label>
-                    <select asp-for="CategoryId" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))">
+                    <label asp-for="CategoryName" class="form-label fw-bold">Category</label>
+                    <select asp-for="CategoryName" class="form-control"
+                            asp-items="@(new SelectList(Model.Categories, "Name", "Name", Model.CategoryName))">
                         <option value="">-- Select Category --</option>
                     </select>
-                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
                 </div>
 
+                <!-- Gender -->
                 <div class="mb-3">
-                    <label asp-for="Gender" class="form-label fw-bold">About</label>
+                    <label asp-for="Gender" class="form-label fw-bold">Gender</label>
                     <select asp-for="Gender" class="form-control">
-                        <option value="">-- Select About --</option>
-                        <option value="Men">Male</option>
-                        <option value="Women">Female</option>
-                        <option value="Kids">Kids</option>
+                        <option value="">-- Select Gender --</option>
+                        @foreach (var gender in genders)
+                        {
+                            <option value="@gender" selected="@(Model.Gender == gender ? "selected" : null)">@gender</option>
+                        }
                     </select>
                     <span asp-validation-for="Gender" class="text-danger"></span>
                 </div>
 
+                <!-- Size -->
                 <div class="mb-3">
                     <label asp-for="Size" class="form-label fw-bold">Size</label>
                     <select asp-for="Size" class="form-control">
@@ -52,48 +59,56 @@
                     <span asp-validation-for="Size" class="text-danger"></span>
                 </div>
 
+                <!-- Price -->
                 <div class="mb-3">
                     <label asp-for="Price" class="form-label fw-bold">Price</label>
-                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="Enter price">
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="Enter price" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
 
+                <!-- Description -->
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label fw-bold">Description</label>
                     <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter product description"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
+                <!-- Warehouse -->
                 <div class="mb-3">
                     <label asp-for="WarehouseName" class="form-label fw-bold">Warehouse</label>
-                    <select asp-for="WarehouseName" class="form-control">
+                    <select asp-for="WarehouseName" class="form-control"
+                            asp-items="@(new SelectList(Model.Warehouses, "Name", "Name", Model.WarehouseName))">
                         <option value="">-- Select Warehouse --</option>
-                        <option value="Veliko Turnovo">Veliko Turnovo</option>
-                        <option value="Sofia">Sofia</option>
                     </select>
                     <span asp-validation-for="WarehouseName" class="text-danger"></span>
                 </div>
 
+                <!-- In Stock -->
                 <div class="mb-3">
                     <label asp-for="InStock" class="form-label fw-bold">In Stock</label>
                     <div class="form-check form-switch">
-                        <input asp-for="InStock" class="form-check-input" type="checkbox" role="switch" id="inStockSwitch">
-                        
+                        <input asp-for="InStock" class="form-check-input" type="checkbox" role="switch" id="inStockSwitch" />
+                        <label class="form-check-label" for="inStockSwitch">
+                            @(Model.InStock ? "Yes" : "No")
+                        </label>
                     </div>
                     <span asp-validation-for="InStock" class="text-danger"></span>
                 </div>
 
+                <!-- Image URL -->
                 <div class="mb-3">
                     <label asp-for="ImageUrl" class="form-label fw-bold">Image URL (optional)</label>
-                    <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" autocomplete="off">
+                    <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" autocomplete="off" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
                 </div>
 
+                <!-- Submit -->
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success fw-bold px-4">
-                        <i class="bi bi-plus-circle"></i> Add Product
+                        <i class="bi bi-save"></i> Save Changes
                     </button>
-                    <a asp-action="Index" class="btn btn-outline-light ms-2">
-                        <i class="bi bi-arrow-left"></i> Back to Shop
+                    <a asp-action="Manage" asp-controller="ProductManagement" class="btn btn-outline-light ms-2">
+                        <i class="bi bi-arrow-left"></i> Back to All Products
                     </a>
                 </div>
             </form>

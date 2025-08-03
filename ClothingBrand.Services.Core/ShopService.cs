@@ -1,8 +1,8 @@
 ﻿using ClothingBrand.Data.Models;
 using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
+using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement;
 using ClothingBrandApp.Web.ViewModels.Product;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Services.Core
@@ -12,13 +12,10 @@ namespace ClothingBrand.Services.Core
         private readonly IShopRepository shopRepository;
         private readonly ICategoryRepository categoryRepository;
         private readonly IWarehouseRepository warehouseRepository;
-        private readonly UserManager<ApplicationUser> userManager;
-        
-        public ShopService(IShopRepository shopRepository, ICategoryRepository categoryRepository, IWarehouseRepository warehouseRepository, 
-            UserManager<ApplicationUser> userManager)
+
+        public ShopService(IShopRepository shopRepository, ICategoryRepository categoryRepository, IWarehouseRepository warehouseRepository)
         {
             this.shopRepository = shopRepository;
-            this.userManager = userManager;
             this.categoryRepository = categoryRepository;
             this.warehouseRepository = warehouseRepository;
         }
@@ -51,19 +48,18 @@ namespace ClothingBrand.Services.Core
             return allProducts;
         }
 
-        public async Task AddProductAsync(string userId, ProductFormInputModel inputModel)
+        public async Task AddProductAsync(ProductFormInputModel inputModel)
         {
-            ApplicationUser? user = await this.userManager.FindByIdAsync(userId);
             Category? category = await this.categoryRepository
-                .FirstOrDefaultAsync(c => c.Id == inputModel.CategoryId);
+                .FirstOrDefaultAsync(c => c.Name == inputModel.CategoryName.ToLower());
             Warehouse? warehouse = await this.warehouseRepository
                 .FirstOrDefaultAsync(w => w.Name.ToLower() == inputModel.WarehouseName.ToLower());
             int genderId = GetGenderId(inputModel.Gender);
 
-            if (user != null && category != null && genderId != 0 && inputModel.Price.HasValue &&
+            if (category != null && genderId != 0 && inputModel.Price.HasValue &&
                 warehouse != null)
             {
-                var newProduct = new Product
+                Product newProduct = new Product
                 {
                     Id = Guid.NewGuid(),
                     Name = inputModel.Name,
@@ -110,7 +106,7 @@ namespace ClothingBrand.Services.Core
                 return null;
             }
 
-            return await this.shopRepository
+            ProductFormInputModel? editModel = await this.shopRepository
                 .GetAllAttached()
                 .AsNoTracking()
                 .Where(p => p.Id == productId)
@@ -119,32 +115,34 @@ namespace ClothingBrand.Services.Core
                     Id = p.Id.ToString(),
                     Name = p.Name,
                     Price = p.Price,
-                    CategoryId = p.CategoryId,
+                    CategoryName = p.Category.Name,
                     Gender = p.Gender.Name,
                     Size = p.Size,
                     Description = p.Description,
+                    WarehouseName = p.Warehouse.Name,
                     ImageUrl = p.ImageUrl,
                     InStock = p.InStock
                 })
                 .SingleOrDefaultAsync();
+
+            return editModel;
         }
 
-        public async Task<bool> EditProductAsync(string userId, ProductFormInputModel inputModel)
+        public async Task<bool> EditProductAsync(ProductFormInputModel inputModel)
         {
-            bool result = false;
-            if (!Guid.TryParse(inputModel.Id, out var productId) || !inputModel.Price.HasValue)
+            Product? editableProduct = await this.FindProductByStringId(inputModel.Id);
+            if (editableProduct == null)
             {
-                return result;
+                return false;
             }
-            Product? editableProduct = await this.shopRepository
-                .GetByIdAsync(productId);
+
             Category? category = await this.categoryRepository
-                .GetByIdAsync(inputModel.CategoryId);
+                .FirstOrDefaultAsync(c => c.Name.ToLower() == inputModel.CategoryName.ToLower());
             Warehouse? warehouse = await this.warehouseRepository
                 .FirstOrDefaultAsync(w => w.Name.ToLower() == inputModel.WarehouseName.ToLower());
             int genderId = GetGenderId(inputModel.Gender);
 
-            if (editableProduct == null || category == null || genderId == 0 || warehouse == null)
+            if (category == null || genderId == 0 || warehouse == null || inputModel.Price == null)
             {
                 return false;
             }
@@ -159,55 +157,54 @@ namespace ClothingBrand.Services.Core
             editableProduct.GenderId = genderId;
             editableProduct.WarehouseId = warehouse.Id;
 
-            result = await this.shopRepository.UpdateAsync(editableProduct);
-
-            return result;
+            return await this.shopRepository.UpdateAsync(editableProduct);
         }
 
-        public async Task<ProductDeleteInputModel?> GetProductForDeleteAsync(Guid? productId)
+        public async Task<bool> DeleteProductAsync(string? id)
         {
-            ProductDeleteInputModel? deleteModel = null;
-
-            if (productId != null)
+            Product? productToDelete = await this.FindProductByStringId(id);
+            if (productToDelete == null)
             {
-                Product? deleteProductModel = await this.shopRepository
-                    .GetAllAttached()
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(p => p.Id == productId);
-
-                if (deleteProductModel != null)
-                {
-                    deleteModel = new ProductDeleteInputModel()
-                    {
-                        Id = deleteProductModel.Id,
-                        Name = deleteProductModel.Name,
-                        ImageUrl = deleteProductModel.ImageUrl,
-                    };
-                }
+                return false;
             }
 
-            return deleteModel;
+            // TODO: To be investigated when relations to Product entity are introduced
+            return await this.shopRepository.HardDeleteAsync(productToDelete);
         }
 
-        public async Task<bool> SoftDeleteAsync(ProductDeleteInputModel inputModel)
+        public async Task<bool> SoftDeleteProductAsync(string? id)
         {
-            bool result = false;
-            Product? deletedProduct = await this.shopRepository
-                .GetByIdAsync(inputModel.Id);
+            Product? productToDelete = await this.FindProductByStringId(id);
 
-            if (deletedProduct == null)
+            if (productToDelete == null)
             {
-                return result;
+                return false;
             }
 
             // Soft Delete <=> Edit of IsDeleted property
-            result = await this.shopRepository.DeleteAsync(deletedProduct);
-
-            return result;
+            return await this.shopRepository.DeleteAsync(productToDelete);
         }
 
 
         // Extended mehods
+
+        private async Task<Product?> FindProductByStringId(string? id)
+        {
+            Product? product = null;
+
+            if (!string.IsNullOrWhiteSpace(id))
+            {
+                bool isGuidValid = Guid.TryParse(id, out Guid movieGuid);
+                if (isGuidValid)
+                {
+                    product = await this.shopRepository
+                        .GetByIdAsync(movieGuid);
+                }
+            }
+
+            return product;
+        }
+
         public async Task<IEnumerable<ProductIndexViewModel>> GetProductsByGenderAsync(string genderName)
         {
             var allProductsForMen = await this.shopRepository

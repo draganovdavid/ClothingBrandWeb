@@ -1,31 +1,31 @@
-﻿@model ClothingBrandApp.Web.ViewModels.Product.ProductFormInputModel
+﻿@model ClothingBrandApp.Web.ViewModels.Admin.ProductManagement.ProductFormInputModel
 
 @{
-    ViewData["Title"] = "Edit Product";
-    // Define possible sizes. Adjust as needed for your app.
+    ViewData["Title"] = "Add New Product";
+
     var sizes = new List<string> { "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL" };
 }
 
 <div class="container mt-5">
-    <h2 class="text-center text-warning fw-bold">@ViewData["Title"]</h2>
+    <h2 class="text-center text-warning fw-bold">Add New Product</h2>
     <hr class="mb-4">
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form asp-controller="Shop" asp-action="Edit" method="post" class="bg-dark text-light p-4 rounded shadow-lg">
+            <form asp-controller="ProductManagement" asp-action="Create" method="post" class="bg-dark text-light p-4 rounded shadow-lg">
 
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label fw-bold">Product Name</label>
-                    <input asp-for="Name" class="form-control" placeholder="Enter product name" autocomplete="off">
+                    <input asp-for="Name" class="form-control" placeholder="Enter product name" autocomplete="off" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="CategoryId" class="form-label fw-bold">Category</label>
-                    <select asp-for="CategoryId" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))">
-                        <option value="">...</option>
+                    <label asp-for="CategoryName" class="form-label fw-bold">Category</label>
+                    <select asp-for="CategoryName" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Categories, "Name", "Name"))">
+                        <option value="">-- Select Category --</option>
                     </select>
-                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
@@ -53,7 +53,7 @@
 
                 <div class="mb-3">
                     <label asp-for="Price" class="form-label fw-bold">Price</label>
-                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="Enter price">
+                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="Enter price" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
 
@@ -65,10 +65,8 @@
 
                 <div class="mb-3">
                     <label asp-for="WarehouseName" class="form-label fw-bold">Warehouse</label>
-                    <select asp-for="WarehouseName" class="form-control">
+                    <select asp-for="WarehouseName" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Warehouses, "Name", "Name"))">
                         <option value="">-- Select Warehouse --</option>
-                        <option value="Veliko Turnovo">Veliko Turnovo</option>
-                        <option value="Sofia">Sofia</option>
                     </select>
                     <span asp-validation-for="WarehouseName" class="text-danger"></span>
                 </div>
@@ -76,27 +74,22 @@
                 <div class="mb-3">
                     <label asp-for="InStock" class="form-label fw-bold">In Stock</label>
                     <div class="form-check form-switch">
-                        <input asp-for="InStock" class="form-check-input" type="checkbox" role="switch" id="inStockSwitch">
-                        <label class="form-check-label" for="inStockSwitch">
-                            @(Model?.InStock == true ? "Yes" : "No")
-                        </label>
+                        <input asp-for="InStock" class="form-check-input" type="checkbox" role="switch" id="inStockSwitch" />
                     </div>
                     <span asp-validation-for="InStock" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
                     <label asp-for="ImageUrl" class="form-label fw-bold">Image URL (optional)</label>
-                    <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" autocomplete="off">
+                    <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" autocomplete="off" />
                 </div>
 
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success fw-bold px-4">
-                        <i class="bi bi-plus-circle"></i> Save Changes
+                        <i class="bi bi-plus-circle"></i> Add Movie
                     </button>
-                    <a asp-action="Details"
-                       asp-route-id="@Model!.Id"
-                       class="btn btn-outline-light ms-2">
-                        <i class="bi bi-arrow-left"></i> Back to Product
+                    <a asp-action="Manage" class="btn btn-outline-light ms-2">
+                        <i class="bi bi-arrow-left"></i> Back to List
                     </a>
                 </div>
             </form>
