@@ -1,0 +1,91 @@
+﻿@using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement
+@model IEnumerable<ProductManagementIndexViewModel>
+
+@{
+    ViewData["Title"] = "Manage Products";
+}
+
+<div class="container-fluid mt-4">
+    <h1 class="text-center text-warning fw-bold">Manage Products</h1>
+    <p class="text-center text-muted">View, edit, or delete product entries.</p>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="btn btn-secondary fw-bold">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <a asp-action="Create" class="btn btn-success fw-bold shadow-lg">
+            <i class="bi bi-plus-circle"></i> Add New Product
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-exclamation-circle"></i> No products available. Click "Add New Product" to create one.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-dark table-hover shadow-lg rounded-3">
+                <thead class="thead-light">
+                    <tr class="text-warning text-center">
+                        <th scope="col">Name</th>
+                        <th scope="col">About</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Size</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (ProductManagementIndexViewModel product in Model)
+                    {
+                        <tr class="align-middle text-center @(product.IsDeleted ? "table-danger" : "")">
+                            <td class="fw-bold">
+                                @product.Name
+                                @if (product.IsDeleted)
+                                {
+                                    <span class="badge bg-danger ms-2">Deleted</span>
+                                }
+                            </td>
+                            <td>@product.Gender</td>
+                            <td>@product.Category</td>
+                            <td>@product.Price.ToString("C")</td>
+                            <td>@product.Size</td>
+                            <td>@product.Description</td>
+                            <td>
+                                @if (product.InStock)
+                                {
+                                    <span class="text-success fw-semibold">
+                                        <i class="bi bi-check-circle-fill"></i> In Stock
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger fw-semibold">
+                                        <i class="bi bi-x-circle-fill"></i> Out of Stock
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-primary btn-sm fw-bold">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+
+                                    <a asp-action="ToggleDelete" asp-route-id="@product.Id" class="btn @(product.IsDeleted ? "btn-warning" : "btn-danger") btn-sm fw-bold">
+                                        <i class="bi @(product.IsDeleted ? "bi-arrow-clockwise" : "bi-trash")"></i>
+                                        @(product.IsDeleted ? "Restore" : "Delete")
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

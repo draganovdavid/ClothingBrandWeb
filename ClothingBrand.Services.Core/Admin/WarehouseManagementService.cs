@@ -7,13 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Services.Core.Admin
 {
-    public class WarehouseManagementService : IWarehouseManagementService
+    public class WarehouseManagementService : WarehouseService, IWarehouseManagementService
     {
         private readonly IWarehouseRepository warehouseRepository;
         private readonly IManagerRepository managerRepository;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public WarehouseManagementService(IWarehouseRepository warehouseRepository, IManagerRepository managerRepository, UserManager<ApplicationUser> userManager)
+        public WarehouseManagementService(IWarehouseRepository warehouseRepository, IManagerRepository managerRepository, UserManager<ApplicationUser> userManager) 
+            : base(warehouseRepository)
         {
             this.warehouseRepository = warehouseRepository;
             this.managerRepository = managerRepository;

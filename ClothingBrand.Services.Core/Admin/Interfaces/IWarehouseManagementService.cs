@@ -1,8 +1,9 @@
-﻿using ClothingBrandApp.Web.ViewModels.Admin.WarehouseManagement;
+﻿using ClothingBrand.Services.Core.Interfaces;
+using ClothingBrandApp.Web.ViewModels.Admin.WarehouseManagement;
 
 namespace ClothingBrand.Services.Core.Admin.Interfaces
 {
-    public interface IWarehouseManagementService
+    public interface IWarehouseManagementService : IWarehouseService
     {
         Task<IEnumerable<WarehouseManagementIndexViewModel>> GetWarehouseManagementBoardDataAsync();
 
