@@ -1,9 +1,13 @@
 ﻿using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Warehouse;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 namespace ClothingBrandApp.Web.Controllers
 {
+    [Authorize(Roles = AdminRoleName)]
     public class WarehouseController : BaseController
     {
         private readonly IWarehouseService warehouseService;

@@ -14,6 +14,5 @@ namespace ClothingBrand.Services.Core.Admin.Interfaces
         Task<bool> EditWarehouseAsync(WarehouseManagementEditFormModel? inputModel);
 
         Task<Tuple<bool, bool>> DeleteOrRestoreWarehouseAsync(string? id);
-
     }
 }

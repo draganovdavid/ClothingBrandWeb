@@ -69,5 +69,17 @@ namespace ClothingBrand.Services.Core
 
             return warehouseProducts;
         }
+
+        public async Task<IEnumerable<WarehouseDropDownModel>> GetAllWarehousesDropDownAsync()
+        {
+            return await this.warehouseRepository
+                .GetAllAttached()
+                .AsNoTracking()
+                .Select(w => new WarehouseDropDownModel()
+                {
+                    Name = w.Name
+                })
+                .ToListAsync();
+        }
     }
 }
