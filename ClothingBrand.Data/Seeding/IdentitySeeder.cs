@@ -9,7 +9,7 @@ namespace ClothingBrand.Data.Seeding
     public class IdentitySeeder : IIdentitySeeder
     {
         private readonly string[] DefaultRoles
-            = { AdminRoleName, UserRoleName };
+            = { AdminRoleName, UserRoleName, ManagerRoleName };
 
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly UserManager<ApplicationUser> userManager;
