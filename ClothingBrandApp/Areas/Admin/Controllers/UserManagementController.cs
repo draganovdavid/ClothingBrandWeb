@@ -41,5 +41,57 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
                 return this.RedirectToAction(nameof(Index));
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveRole(RoleSelectionInputModel inputModel)
+        {
+            try
+            {
+                bool removed = await this.userService.RemoveUserFromRoleAsync(inputModel);
+
+                if (removed)
+                {
+                    TempData[SuccessMessageKey] = "Role removed successfully!";
+                }
+                else
+                {
+                    TempData[ErrorMessageKey] = "Could not remove role from user.";
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData[ErrorMessageKey] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            try
+            {
+                bool deleted = await this.userService.DeleteUserAsync(userId);
+
+                if (deleted)
+                {
+                    TempData[SuccessMessageKey] = "User deleted successfully!";
+                }
+                else
+                {
+                    TempData[ErrorMessageKey] = "User could not be deleted.";
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData[ErrorMessageKey] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
     }
 }

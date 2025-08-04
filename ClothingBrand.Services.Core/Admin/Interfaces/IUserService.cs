@@ -9,5 +9,9 @@ namespace ClothingBrand.Services.Core.Admin.Interfaces
         Task<IEnumerable<string>> GetManagerEmailsAsync();
 
         Task<bool> AssignUserToRoleAsync(RoleSelectionInputModel inputModel);
+
+        Task<bool> RemoveUserFromRoleAsync(RoleSelectionInputModel inputModel);
+
+        Task<bool> DeleteUserAsync(string userId);
     }
 }

@@ -79,5 +79,65 @@ namespace ClothingBrand.Services.Core.Admin
                     innerException: e);
             }
         }
+
+        public async Task<bool> RemoveUserFromRoleAsync(RoleSelectionInputModel inputModel)
+        {
+            ApplicationUser? user = await this.userManager.FindByIdAsync(inputModel.UserId);
+
+            if (user == null)
+            {
+                throw new ArgumentException("User does not exist!");
+            }
+
+            bool roleExists = await this.roleManager.RoleExistsAsync(inputModel.Role);
+            if (!roleExists)
+            {
+                throw new ArgumentException("Selected role is not a valid role!");
+            }
+
+            if (!await this.userManager.IsInRoleAsync(user, inputModel.Role))
+            {
+                throw new InvalidOperationException("User is not in the specified role.");
+            }
+
+            try
+            {
+                var result = await this.userManager.RemoveFromRoleAsync(user, inputModel.Role);
+                return result.Succeeded;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("Unexpected error occurred while removing the user from role.", e);
+            }
+        }
+
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            ApplicationUser? user = await this.userManager
+                .FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+
+            bool isUserAdmin = await this.userManager.IsInRoleAsync(user, "Admin");
+
+            if (!isUserAdmin)
+            {
+                throw new InvalidOperationException("Cannot delete Admin users.");
+            }
+
+            try
+            {
+                var result = await this.userManager.DeleteAsync(user);
+
+                return result.Succeeded;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException("Error deleting user.", e);
+            }
+        }
     }
 }
