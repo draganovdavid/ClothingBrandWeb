@@ -1,33 +1,44 @@
 ﻿@model ClothingBrandApp.Web.ViewModels.Admin.ProductManagement.ProductFormInputModel
+@using static ClothingBrandApp.GCommon.ApplicationConstants;
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "Add New Product";
-
     var sizes = new List<string> { "XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL" };
+    bool isManager = HttpContextAccessor.HttpContext!.User.IsInRole(ManagerRoleName);
 }
 
 <div class="container mt-5">
-    <h2 class="text-center text-warning fw-bold">Add New Product</h2>
+    <h2 class="text-center text-warning fw-bold">@ViewData["Title"]</h2>
     <hr class="mb-4">
 
     <div class="row justify-content-center">
         <div class="col-md-6">
             <form asp-controller="ProductManagement" asp-action="Create" method="post" class="bg-dark text-light p-4 rounded shadow-lg">
 
+                @* Скрито поле само ако си Manager *@
+                @if (isManager)
+                {
+                    <input type="hidden" name="warehouseId" value="@Context.Request.Query["warehouseId"]" />
+                }
+
+                <!-- Name -->
                 <div class="mb-3">
                     <label asp-for="Name" class="form-label fw-bold">Product Name</label>
                     <input asp-for="Name" class="form-control" placeholder="Enter product name" autocomplete="off" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
+                <!-- Category -->
                 <div class="mb-3">
                     <label asp-for="CategoryName" class="form-label fw-bold">Category</label>
-                    <select asp-for="CategoryName" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Categories, "Name", "Name"))">
+                    <select asp-for="CategoryName" class="form-control" asp-items="@(new SelectList(Model.Categories, "Name", "Name"))">
                         <option value="">-- Select Category --</option>
                     </select>
                     <span asp-validation-for="CategoryName" class="text-danger"></span>
                 </div>
 
+                <!-- Gender -->
                 <div class="mb-3">
                     <label asp-for="Gender" class="form-label fw-bold">About</label>
                     <select asp-for="Gender" class="form-control">
@@ -39,38 +50,43 @@
                     <span asp-validation-for="Gender" class="text-danger"></span>
                 </div>
 
+                <!-- Size -->
                 <div class="mb-3">
                     <label asp-for="Size" class="form-label fw-bold">Size</label>
                     <select asp-for="Size" class="form-control">
                         <option value="">-- Select Size --</option>
                         @foreach (var size in sizes)
                         {
-                            <option value="@size" selected="@(Model.Size == size ? "selected" : null)">@size</option>
+                            <option value="@size">@size</option>
                         }
                     </select>
                     <span asp-validation-for="Size" class="text-danger"></span>
                 </div>
 
+                <!-- Price -->
                 <div class="mb-3">
                     <label asp-for="Price" class="form-label fw-bold">Price</label>
                     <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" placeholder="Enter price" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
 
+                <!-- Description -->
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label fw-bold">Description</label>
                     <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter product description"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
+                <!-- Warehouse -->
                 <div class="mb-3">
                     <label asp-for="WarehouseName" class="form-label fw-bold">Warehouse</label>
-                    <select asp-for="WarehouseName" class="form-control" aria-required="true" asp-items="@(new SelectList(Model.Warehouses, "Name", "Name"))">
+                    <select asp-for="WarehouseName" class="form-control" asp-items="@(new SelectList(Model.Warehouses, "Name", "Name"))">
                         <option value="">-- Select Warehouse --</option>
                     </select>
                     <span asp-validation-for="WarehouseName" class="text-danger"></span>
                 </div>
 
+                <!-- In Stock -->
                 <div class="mb-3">
                     <label asp-for="InStock" class="form-label fw-bold">In Stock</label>
                     <div class="form-check form-switch">
@@ -79,14 +95,16 @@
                     <span asp-validation-for="InStock" class="text-danger"></span>
                 </div>
 
+                <!-- Image URL -->
                 <div class="mb-3">
                     <label asp-for="ImageUrl" class="form-label fw-bold">Image URL (optional)</label>
                     <input asp-for="ImageUrl" class="form-control" placeholder="Enter image URL" autocomplete="off" />
                 </div>
 
+                <!-- Submit -->
                 <div class="text-center mt-4">
                     <button type="submit" class="btn btn-success fw-bold px-4">
-                        <i class="bi bi-plus-circle"></i> Add Movie
+                        <i class="bi bi-plus-circle"></i> Add Product
                     </button>
                     <a asp-action="Manage" class="btn btn-outline-light ms-2">
                         <i class="bi bi-arrow-left"></i> Back to List

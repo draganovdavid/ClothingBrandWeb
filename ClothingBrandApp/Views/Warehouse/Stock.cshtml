@@ -6,7 +6,7 @@
 }
 
 @section Styles {
-	<link rel="stylesheet" href="~/css/user.css">
+	<link rel="stylesheet" href="~/css/user.css" />
 }
 
 <div class="warehouse-bg bg-dark text-light">
@@ -22,7 +22,11 @@
 				<a asp-controller="Warehouse" asp-action="Index" class="btn btn-secondary fw-bold">
 					<i class="bi bi-arrow-left"></i> Back to Warehouses
 				</a>
-				<a asp-controller="Shop" asp-action="Add" class="btn btn-success fw-bold">
+				<a asp-area="Admin"
+				   asp-controller="ProductManagement"
+				   asp-action="Create"
+				   asp-route-warehouseId="@Model.WarehouseId"
+				   class="btn btn-success fw-bold">
 					<i class="bi bi-plus-circle"></i> Add Product
 				</a>
 			</div>
@@ -69,15 +73,19 @@
 											data-product-price="@product.Price.ToString("F2")"
 											data-product-stock="@(product.InStock ? "In Stock" : "Out of Stock")"
 											data-product-image="@product.ImageUrl"
-											data-product-gender="@product.Gender">
+											data-product-gender="@product.Gender"
+											data-warehouse-id="@Model.WarehouseId">
 										<i class="fas fa-eye"></i> View Details
 									</button>
 
-									<a asp-controller="Shop"
-									   asp-action="Delete"
+									<a asp-area="Admin"
+									   asp-controller="ProductManagement"
+									   asp-action="ToggleDelete"
 									   asp-route-id="@product.Id"
-									   class="btn btn-outline-danger rounded-pill fw-bold">
-										<i class="bi bi-trash"></i> Remove Product
+									   asp-route-warehouseId="@Model.WarehouseId"
+									   class="btn @(product.IsDeleted ? "btn-outline-success" : "btn-outline-danger") rounded-pill fw-bold">
+										<i class="bi @(product.IsDeleted ? "bi-arrow-counterclockwise" : "bi-trash")"></i>
+										@(product.IsDeleted ? "Restore Product" : "Remove Product")
 									</a>
 								</div>
 							</div>
@@ -99,7 +107,7 @@
 			</div>
 			<div class="modal-body bg-light text-dark">
 				<div id="productDetailsContent" class="p-3">
-					<!-- Dynamic content -->
+					<!-- Populated by JS -->
 				</div>
 			</div>
 			<div class="modal-footer bg-white">
@@ -113,10 +121,7 @@
 </div>
 
 @section Scripts {
-	<script src="~/js/pagination.js"></script>
-
 	<script>
-
 		document.querySelectorAll('.view-details-btn').forEach(button => {
 			button.addEventListener('click', function () {
 				const productId = this.getAttribute('data-product-id');
@@ -125,6 +130,7 @@
 				const stock = this.getAttribute('data-product-stock');
 				const image = this.getAttribute('data-product-image');
 				const gender = this.getAttribute('data-product-gender');
+				const warehouseId = this.getAttribute('data-warehouse-id');
 
 				const content = `
 					<div class="row">
@@ -142,7 +148,7 @@
 				`;
 
 				document.getElementById('productDetailsContent').innerHTML = content;
-				document.getElementById('editProductBtn').setAttribute('href', `/Shop/Edit/${productId}`);
+				document.getElementById('editProductBtn').setAttribute('href', `/Admin/ProductManagement/Edit/${productId}?warehouseId=${warehouseId}`);
 
 				new bootstrap.Modal(document.getElementById('productDetailsModal')).show();
 			});

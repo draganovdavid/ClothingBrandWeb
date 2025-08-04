@@ -1,14 +1,15 @@
 ﻿using ClothingBrand.Services.Core.Admin.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using static ClothingBrandApp.GCommon.ApplicationConstants;
-using static ClothingBrandApp.GCommon.ExceptionMessages;
 
 namespace ClothingBrandApp.Web.Areas.Admin.Controllers
 {
-    public class ProductManagementController : BaseAdminController
+    [Area(AdminRoleName)]
+    [Authorize]
+    public class ProductManagementController : Controller
     {
         private readonly IProductManagementService productManagementService;
         private readonly IWarehouseService warehouseService;
@@ -23,34 +24,36 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
             this.logger = logger;
         }
 
+        [Authorize(Roles = AdminRoleName)]
         [HttpGet]
         public async Task<IActionResult> Manage()
         {
-            IEnumerable<ProductManagementIndexViewModel> allProducts = await this.productManagementService
-                .GetProductManagementBoardDataAsync();
-
+            var allProducts = await this.productManagementService.GetProductManagementBoardDataAsync();
             return View(allProducts);
         }
 
+        [Authorize(Roles = $"{AdminRoleName},{ManagerRoleName}")]
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string? warehouseId)
         {
-            ProductFormInputModel inputModel = new ProductFormInputModel()
+            var inputModel = new ProductFormInputModel
             {
-                Categories = await this.categoryService
-                .GetAllCategoriesDropDownAsync(),
-                Warehouses = await this.warehouseService
-                .GetAllWarehousesDropDownAsync()
+                Categories = await this.categoryService.GetAllCategoriesDropDownAsync(),
+                Warehouses = await this.warehouseService.GetAllWarehousesDropDownAsync()
             };
+
+            ViewBag.WarehouseId = warehouseId;
 
             return this.View(inputModel);
         }
 
+        [Authorize(Roles = $"{AdminRoleName},{ManagerRoleName}")]
         [HttpPost]
-        public async Task<IActionResult> Create(ProductFormInputModel inputModel)
+        public async Task<IActionResult> Create(ProductFormInputModel inputModel, string? warehouseId)
         {
             if (!this.ModelState.IsValid)
             {
+                ViewBag.WarehouseId = warehouseId;
                 return this.View(inputModel);
             }
 
@@ -59,24 +62,28 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
                 await this.productManagementService.AddProductAsync(inputModel);
                 TempData[SuccessMessageKey] = "Product added successfully!";
 
-                return this.RedirectToAction(nameof(Manage));
+                if (User.IsInRole(ManagerRoleName) && !string.IsNullOrEmpty(warehouseId))
+                {
+                    return RedirectToAction("Stock", "Warehouse", new { area = "", id = warehouseId });
+                }
+
+                return RedirectToAction(nameof(Manage));
             }
             catch (Exception e)
             {
                 this.logger.LogCritical(e.Message);
-
                 TempData[ErrorMessageKey] = "Fatal error occurred while adding your product! Please try again later!";
-                return this.RedirectToAction(nameof(Manage));
+                return RedirectToAction(nameof(Manage));
             }
         }
 
+        [Authorize(Roles = $"{AdminRoleName},{ManagerRoleName}")]
         [HttpGet]
-        public async Task<IActionResult> Edit(Guid? id)
+        public async Task<IActionResult> Edit(Guid? id, string? warehouseId)
         {
             try
             {
-                ProductFormInputModel? editInputModel = await this.productManagementService
-                    .GetProductForEditingAsync(id);
+                var editInputModel = await this.productManagementService.GetProductForEditingAsync(id);
                 if (editInputModel == null)
                 {
                     return this.NotFound();
@@ -85,30 +92,31 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
                 editInputModel.Categories = await this.categoryService.GetAllCategoriesDropDownAsync();
                 editInputModel.Warehouses = await this.warehouseService.GetAllWarehousesDropDownAsync();
 
+                ViewBag.WarehouseId = warehouseId;
+
                 return this.View(editInputModel);
             }
             catch (Exception e)
             {
                 this.logger.LogCritical(e.Message);
                 TempData[ErrorMessageKey] = "Fatal error occurred while updating the product! Please try again later!";
-
                 return this.RedirectToAction(nameof(Manage));
             }
         }
 
-
+        [Authorize(Roles = $"{AdminRoleName},{ManagerRoleName}")]
         [HttpPost]
-        public async Task<IActionResult> Edit(ProductFormInputModel inputModel)
+        public async Task<IActionResult> Edit(ProductFormInputModel inputModel, string? warehouseId)
         {
+            if (!this.ModelState.IsValid)
+            {
+                ViewBag.WarehouseId = warehouseId;
+                return this.View(inputModel);
+            }
+
             try
             {
-                if (!this.ModelState.IsValid)
-                {
-                    return this.View(inputModel);
-                }
-
-                bool editSuccess = await this.productManagementService
-                    .EditProductAsync(inputModel);
+                bool editSuccess = await this.productManagementService.EditProductAsync(inputModel);
                 if (!editSuccess)
                 {
                     TempData[ErrorMessageKey] = "Selected Product does not exist!";
@@ -118,24 +126,29 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
                     TempData[SuccessMessageKey] = "Product updated successfully!";
                 }
 
-                return this.RedirectToAction(nameof(Manage));
+                if (User.IsInRole(ManagerRoleName) && !string.IsNullOrEmpty(warehouseId))
+                {
+                    return RedirectToAction("Stock", "Warehouse", new { area = "", id = warehouseId });
+                }
+
+                return RedirectToAction(nameof(Manage));
             }
             catch (Exception e)
             {
                 this.logger.LogCritical(e.Message);
                 TempData[ErrorMessageKey] = "Fatal error occurred while updating the product! Please try again later!";
-
                 return this.RedirectToAction(nameof(Manage));
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> ToggleDelete(string? id)
+        [Authorize(Roles = $"{AdminRoleName},{ManagerRoleName}")]
+        public async Task<IActionResult> ToggleDelete(string? id, string? warehouseId)
         {
-            Tuple<bool, bool> opResult = await this.productManagementService
-                .DeleteOrRestoreProductAsync(id);
+            var opResult = await this.productManagementService.DeleteOrRestoreProductAsync(id);
             bool success = opResult.Item1;
             bool isRestored = opResult.Item2;
+
             if (!success)
             {
                 TempData[ErrorMessageKey] = "Product could not be found and updated!";
@@ -143,11 +156,15 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
             else
             {
                 string operation = isRestored ? "restored" : "deleted";
-
                 TempData[SuccessMessageKey] = $"Product {operation} successfully!";
             }
 
-            return this.RedirectToAction(nameof(Manage));
+            if (User.IsInRole(ManagerRoleName) && !string.IsNullOrEmpty(warehouseId))
+            {
+                return RedirectToAction("Stock", "Warehouse", new { area = "", id = warehouseId });
+            }
+
+            return RedirectToAction(nameof(Manage));
         }
     }
 }

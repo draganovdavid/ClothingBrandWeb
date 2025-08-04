@@ -34,10 +34,12 @@ namespace ClothingBrand.Services.Core
         public async Task<WarehouseStockViewModel?> GetWarehouseProductsAsync(string? id)
         {
             WarehouseStockViewModel? warehouseProducts = null;
-            if (!String.IsNullOrWhiteSpace(id))
+
+            if (!string.IsNullOrWhiteSpace(id))
             {
                 Warehouse? warehouse = await warehouseRepository
                     .GetAllAttached()
+                    .IgnoreQueryFilters()
                     .Where(w => w.Id.ToString().ToLower() == id.ToLower())
                     .Include(w => w.Manager)
                         .ThenInclude(m => m!.User)
@@ -51,16 +53,19 @@ namespace ClothingBrand.Services.Core
                     {
                         WarehouseId = warehouse.Id.ToString(),
                         WarehouseName = $"{warehouse.Name} - {warehouse.Location}",
+                        WarehouseManager = warehouse.Manager != null
+                            ? $"{warehouse.Manager.User.UserName}"
+                            : "Unassigned",
                         WarehouseProducts = warehouse.WarehouseProducts
-                            .Where(p => !p.IsDeleted)
                             .Select(p => new WarehouseStockProductViewModel
                             {
                                 Id = p.Id,
                                 Name = p.Name,
                                 Price = p.Price,
                                 InStock = p.InStock,
-                                ImageUrl = p.ImageUrl ?? "/images/NoImage.png",
-                                Gender = p.Gender.Name // ✅ safe if .Include(Gender) worked
+                                ImageUrl = p.ImageUrl,
+                                Gender = p.Gender.Name,
+                                IsDeleted = p.IsDeleted
                             })
                             .ToList()
                     };
@@ -69,6 +74,7 @@ namespace ClothingBrand.Services.Core
 
             return warehouseProducts;
         }
+
 
         public async Task<IEnumerable<WarehouseDropDownModel>> GetAllWarehousesDropDownAsync()
         {

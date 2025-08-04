@@ -30,7 +30,7 @@ namespace ClothingBrandApp.Web.ViewModels.Admin.ProductManagement
 
         [Required(ErrorMessage = PriceRequiredMessage)]
         [Range(0.01, double.MaxValue, ErrorMessage = PriceRangeMessage)]
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
 
         [Required(ErrorMessage = DescriptionRequiredMessage)]
         [MinLength(DescriptionMinLength, ErrorMessage = DescriptionMinLengthMessage)]

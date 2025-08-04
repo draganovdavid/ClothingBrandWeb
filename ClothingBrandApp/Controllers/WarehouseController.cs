@@ -7,8 +7,9 @@ using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 namespace ClothingBrandApp.Web.Controllers
 {
-    [Authorize(Roles = AdminRoleName)]
-    public class WarehouseController : BaseController
+    [Authorize(Roles = $"{AdminRoleName},{ManagerRoleName}")]
+    [AutoValidateAntiforgeryToken]
+    public class WarehouseController : Controller
     {
         private readonly IWarehouseService warehouseService;
 
