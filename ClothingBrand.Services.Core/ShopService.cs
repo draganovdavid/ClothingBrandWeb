@@ -56,14 +56,13 @@ namespace ClothingBrand.Services.Core
                 .FirstOrDefaultAsync(w => w.Name.ToLower() == inputModel.WarehouseName.ToLower());
             int genderId = GetGenderId(inputModel.Gender);
 
-            if (category != null && genderId != 0 && inputModel.Price.HasValue &&
-                warehouse != null)
+            if (category != null && genderId != 0  && warehouse != null)
             {
                 Product newProduct = new Product
                 {
                     Id = Guid.NewGuid(),
                     Name = inputModel.Name,
-                    Price = inputModel.Price.Value,
+                    Price = inputModel.Price,
                     Description = inputModel.Description,
                     Size = inputModel.Size,
                     ImageUrl = inputModel.ImageUrl,
@@ -108,6 +107,7 @@ namespace ClothingBrand.Services.Core
 
             ProductFormInputModel? editModel = await this.shopRepository
                 .GetAllAttached()
+                .IgnoreQueryFilters()
                 .AsNoTracking()
                 .Where(p => p.Id == productId)
                 .Select(p => new ProductFormInputModel
@@ -142,13 +142,13 @@ namespace ClothingBrand.Services.Core
                 .FirstOrDefaultAsync(w => w.Name.ToLower() == inputModel.WarehouseName.ToLower());
             int genderId = GetGenderId(inputModel.Gender);
 
-            if (category == null || genderId == 0 || warehouse == null || inputModel.Price == null)
+            if (category == null || genderId == 0 || warehouse == null)
             {
                 return false;
             }
 
             editableProduct.Name = inputModel.Name;
-            editableProduct.Price = inputModel.Price.Value;
+            editableProduct.Price = inputModel.Price;
             editableProduct.Description = inputModel.Description;
             editableProduct.Size = inputModel.Size;
             editableProduct.ImageUrl = inputModel.ImageUrl;
@@ -194,11 +194,13 @@ namespace ClothingBrand.Services.Core
 
             if (!string.IsNullOrWhiteSpace(id))
             {
-                bool isGuidValid = Guid.TryParse(id, out Guid movieGuid);
+                bool isGuidValid = Guid.TryParse(id, out Guid productGuid);
                 if (isGuidValid)
                 {
                     product = await this.shopRepository
-                        .GetByIdAsync(movieGuid);
+                        .GetAllAttached()
+                        .IgnoreQueryFilters()
+                        .SingleOrDefaultAsync(p => p.Id == productGuid);
                 }
             }
 
@@ -207,7 +209,7 @@ namespace ClothingBrand.Services.Core
 
         public async Task<IEnumerable<ProductIndexViewModel>> GetProductsByGenderAsync(string genderName)
         {
-            var allProductsForMen = await this.shopRepository
+            var allProductsForCollection = await this.shopRepository
                 .GetAllAttached()
                 .AsNoTracking()
                 .Where(p => p.Gender.Name == genderName)
@@ -221,7 +223,7 @@ namespace ClothingBrand.Services.Core
                 })
                 .ToListAsync();
 
-            return allProductsForMen;
+            return allProductsForCollection;
         }
 
         private int GetGenderId(string genderName)
