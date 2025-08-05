@@ -1,6 +1,6 @@
-﻿using ClothingBrand.Data.Models;
-using ClothingBrand.Data.Repository.Interfaces;
+﻿using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
+using ClothingBrandApp.Web.ViewModels.Category;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClothingBrand.Services.Core
@@ -14,14 +14,13 @@ namespace ClothingBrand.Services.Core
             this.categoryRepository = categoyRepository;
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategoriesDropDownAsync()
+        public async Task<IEnumerable<AllCategoriesDropDownViewModel>> GetAllCategoriesDropDownAsync()
         {
-            IEnumerable<Category> categoriesAsDropDown = await this.categoryRepository
+            IEnumerable<AllCategoriesDropDownViewModel> categoriesAsDropDown = await this.categoryRepository
                 .GetAllAttached()
                 .AsNoTracking()
-                .Select(c => new Category()
+                .Select(c => new AllCategoriesDropDownViewModel()
                 {
-                    Id = c.Id,
                     Name = c.Name
                 })
                 .ToListAsync();

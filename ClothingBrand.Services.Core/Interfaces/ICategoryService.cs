@@ -1,10 +1,9 @@
-﻿using ClothingBrand.Data.Models;
-using ClothingBrandApp.Web.ViewModels.Product;
+﻿using ClothingBrandApp.Web.ViewModels.Category;
 
 namespace ClothingBrand.Services.Core.Interfaces
 {
     public interface ICategoryService
     {
-        Task<IEnumerable<Category>> GetAllCategoriesDropDownAsync();
+        Task<IEnumerable<AllCategoriesDropDownViewModel>> GetAllCategoriesDropDownAsync();
     }
 }
