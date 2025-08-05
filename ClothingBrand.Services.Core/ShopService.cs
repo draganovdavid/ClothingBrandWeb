@@ -4,6 +4,7 @@ using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.EntityFrameworkCore;
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 namespace ClothingBrand.Services.Core
 {
@@ -36,14 +37,13 @@ namespace ClothingBrand.Services.Core
                 })
                 .ToListAsync();
 
-            // TODO: Add noImage if the image is null
-            //foreach (ProductIndexViewModel movie in allProducts)
-            //{
-            //    if (String.IsNullOrEmpty(movie.ImageUrl))
-            //    {
-            //        movie.ImageUrl = $"/images/{NoImageUrl}";
-            //    }
-            //}
+            foreach (ProductIndexViewModel product in allProducts)
+            {
+                if (String.IsNullOrEmpty(product.ImageUrl))
+                {
+                    product.ImageUrl = $"/images/{NoImageUrl}";
+                }
+            }
 
             return allProducts;
         }
@@ -56,7 +56,7 @@ namespace ClothingBrand.Services.Core
                 .FirstOrDefaultAsync(w => w.Name.ToLower() == inputModel.WarehouseName.ToLower());
             int genderId = GetGenderId(inputModel.Gender);
 
-            if (category != null && genderId != 0  && warehouse != null)
+            if (category != null && genderId != 0 && warehouse != null)
             {
                 Product newProduct = new Product
                 {
@@ -79,7 +79,7 @@ namespace ClothingBrand.Services.Core
 
         public async Task<ProductDetailsViewModel?> GetProductDetailsByIdAsync(Guid? id)
         {
-            return await this.shopRepository
+            var productDetails = await this.shopRepository
                 .GetAllAttached()
                 .AsNoTracking()
                 .Where(p => p.Id == id)
@@ -96,6 +96,13 @@ namespace ClothingBrand.Services.Core
                     GenderName = p.Gender.Name,
                 })
                 .SingleOrDefaultAsync();
+
+                if (productDetails != null && String.IsNullOrEmpty(productDetails.ImageUrl))
+                {
+                    productDetails.ImageUrl = $"/images/{NoImageUrl}";
+                }
+
+                return productDetails;
         }
 
         public async Task<ProductFormInputModel?> GetProductForEditingAsync(Guid? productId)
@@ -222,6 +229,14 @@ namespace ClothingBrand.Services.Core
                     InStock = p.InStock
                 })
                 .ToListAsync();
+
+            foreach (ProductIndexViewModel product in allProductsForCollection)
+            {
+                if (String.IsNullOrEmpty(product.ImageUrl))
+                {
+                    product.ImageUrl = $"/images/{NoImageUrl}";
+                }
+            }
 
             return allProductsForCollection;
         }

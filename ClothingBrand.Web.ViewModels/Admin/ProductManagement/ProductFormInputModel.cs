@@ -1,4 +1,4 @@
-﻿using ClothingBrand.Data.Models;
+﻿using ClothingBrandApp.Web.ViewModels.Category;
 using ClothingBrandApp.Web.ViewModels.Warehouse;
 using System.ComponentModel.DataAnnotations;
 using static ClothingBrand.Data.Common.EntityConstants.Product;
@@ -18,7 +18,7 @@ namespace ClothingBrandApp.Web.ViewModels.Admin.ProductManagement
 
         [Required(ErrorMessage = CategoryRequiredMessage)]
         public string CategoryName { get; set; } = null!;
-        public IEnumerable<Category>? Categories { get; set; }
+        public IEnumerable<AllCategoriesDropDownViewModel>? Categories { get; set; }
 
         [Required(ErrorMessage = GenderRequiredMessage)]
         public string Gender { get; set; } = null!;
