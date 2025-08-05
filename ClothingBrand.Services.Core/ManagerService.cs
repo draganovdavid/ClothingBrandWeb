@@ -50,7 +50,7 @@ namespace ClothingBrand.Services.Core
             {
                 result = await this.managerRepository
                     .GetAllAttached()
-                    .AnyAsync(m => m.UserId.ToLower() == userId.ToLower());
+                    .AnyAsync(m => m.UserId.ToLowerInvariant() == userId.ToLowerInvariant());
             }
 
             return result;
