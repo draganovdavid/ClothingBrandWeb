@@ -2,10 +2,10 @@
 
 <div class="row mb-4">
     <div class="col-md-6">
-        <input type="text" id="searchBar" class="form-control shadow-sm" placeholder="Search for a cinema..." onkeyup="filterCinemas()">
+        <input type="text" id="searchBar" class="form-control shadow-sm" placeholder="Search for a warehouse..." onkeyup="filterWarehouses()">
     </div>
     <div class="col-md-6">
-        <select id="cityFilter" class="form-select shadow-sm" onchange="filterCinemas()">
+        <select id="cityFilter" class="form-select shadow-sm" onchange="filterWarehouses()">
             <option value="">All Cities</option>
             @foreach (var city in Model)
             {

@@ -2,8 +2,8 @@
 using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Product;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 public class ShoppingCartService : IShoppingCartService
 {
@@ -16,7 +16,7 @@ public class ShoppingCartService : IShoppingCartService
 
     public async Task<IEnumerable<ProductIndexViewModel>> GetAllProductsInShoppingCartAsync(string userId)
     {
-        return await this.shoppingCartRepository
+        IEnumerable<ProductIndexViewModel> allShopCartProd = await this.shoppingCartRepository
             .GetAllAttached()
             .Include(ausc => ausc.Product)
             .AsNoTracking()
@@ -29,6 +29,15 @@ public class ShoppingCartService : IShoppingCartService
                 ImageUrl = ausc.Product.ImageUrl
             })
             .ToListAsync();
+        foreach (ProductIndexViewModel product in allShopCartProd)
+        {
+            if (String.IsNullOrEmpty(product.ImageUrl))
+            {
+                product.ImageUrl = $"/images/{NoImageUrl}";
+            }
+        }
+
+        return allShopCartProd;
     }
 
     public async Task<bool> AddProductToShoppingCartAsync(Guid? productId, string userId)

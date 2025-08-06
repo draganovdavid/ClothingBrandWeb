@@ -49,23 +49,23 @@ namespace ClothingBrand.Web.Controllers
         {
             try
             {
-                ProductDetailsViewModel? movieDetails = await this.shopService
+                ProductDetailsViewModel? productDetails = await this.shopService
                     .GetProductDetailsByIdAsync(id);
-                if (this.IsUserAuthenticated() && movieDetails != null)
+                if (this.IsUserAuthenticated() && productDetails != null)
                 {
-                    movieDetails.IsFavorite = await this.favoriteService
-                            .IsProductAddedToFavorites(movieDetails.Id, this.GetUserId()!);
-                    movieDetails.IsInShoppingCart = await this.shoppingCartService
-                        .IsProductAddedToShoppingCart(movieDetails.Id, this.GetUserId()!);
+                    productDetails.IsFavorite = await this.favoriteService
+                            .IsProductAddedToFavorites(productDetails.Id, this.GetUserId()!);
+                    productDetails.IsInShoppingCart = await this.shoppingCartService
+                        .IsProductAddedToShoppingCart(productDetails.Id, this.GetUserId()!);
 
                 }
-                if (movieDetails == null)
+                if (productDetails == null)
                 {
                     // TODO: Custom 404 page
                     return this.RedirectToAction(nameof(Index));
                 }
 
-                return this.View(movieDetails);
+                return this.View(productDetails);
             }
             catch (Exception e)
             {

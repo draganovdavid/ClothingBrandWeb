@@ -4,6 +4,7 @@ using ClothingBrand.Services.Core.Admin.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Admin.UserManagement;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 namespace ClothingBrand.Services.Core.Admin
 {
@@ -66,6 +67,34 @@ namespace ClothingBrand.Services.Core.Admin
                 throw new ArgumentException("Selected role is not a valid role!");
             }
 
+            if (inputModel.Role == ManagerRoleName)
+            {
+                var existingManager = await this.managerRepository
+                    .GetAllAttached()
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync(m => m.UserId == user.Id);
+
+                if (existingManager != null)
+                {
+                    if (existingManager.IsDeleted)
+                    {
+                        existingManager.IsDeleted = false;
+                        await this.managerRepository.UpdateAsync(existingManager);
+                    }
+                }
+                else
+                {
+                    var newManager = new Manager
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = user.Id,
+                        IsDeleted = false
+                    };
+
+                    await this.managerRepository.AddAsync(newManager);
+                }
+            }
+
             try
             {
                 await this.userManager.AddToRoleAsync(user, inputModel.Role);
@@ -98,6 +127,21 @@ namespace ClothingBrand.Services.Core.Admin
             if (!await this.userManager.IsInRoleAsync(user, inputModel.Role))
             {
                 throw new InvalidOperationException("User is not in the specified role.");
+            }
+
+            if (inputModel.Role == ManagerRoleName)
+            {
+                Manager? existManager = await this.managerRepository
+                    .SingleOrDefaultAsync(m => m.UserId == inputModel.UserId);
+
+                if (existManager != null)
+                {
+                    if (existManager.IsDeleted == false)
+                    {
+                        existManager.IsDeleted = true;
+                        await this.managerRepository.UpdateAsync(existManager);
+                    }
+                }
             }
 
             try

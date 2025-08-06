@@ -5,19 +5,19 @@
     function filterWarehouses() {
         let searchValue = searchBar.value.toLowerCase();
         let cityValue = cityFilter.value.toLowerCase();
-        let cinemaCards = document.querySelectorAll(".warehouse-card");
+        let warehouseCards = document.querySelectorAll(".warehouse-card");
 
-        cinemaCards.forEach(cinema => {
-            let cinemaName = cinema.querySelector(".card-title").textContent.toLowerCase();
-            let cinemaCity = cinema.getAttribute("data-city").toLowerCase();
+        warehouseCards.forEach(warehouse => {
+            let warehouseName = warehouse.querySelector(".card-title").textContent.toLowerCase();
+            let warehouseCity = warehouse.getAttribute("data-city").toLowerCase();
 
-            let matchesSearch = searchValue === "" || cinemaName.includes(searchValue);
-            let matchesCity = cityValue === "" || cinemaCity === cityValue;
+            let matchesSearch = searchValue === "" || warehouseName.includes(searchValue);
+            let matchesCity = cityValue === "" || warehouseCity === cityValue;
 
             if (matchesSearch && matchesCity) {
-                cinema.style.display = "block";
+                warehouse.style.display = "block";
             } else {
-                cinema.style.display = "none";
+                warehouse.style.display = "none";
             }
         });
     }

@@ -10,7 +10,7 @@ namespace ClothingBrand.Services.Core.Interfaces
 
         Task<bool> DeleteProductFromUserFavoritesAsync(Guid? productId, string? userId);
 
-        Task<bool> IsProductAddedToFavorites(Guid? productId, string userId);
+        Task<bool> IsProductAddedToFavorites(Guid? productId, string? userId);
 
     }
 }

@@ -3,6 +3,7 @@ using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Warehouse;
 using Microsoft.EntityFrameworkCore;
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 namespace ClothingBrand.Services.Core
 {
@@ -70,11 +71,23 @@ namespace ClothingBrand.Services.Core
                             .ToList()
                     };
                 }
+
+                if(warehouseProducts == null)
+                {
+                    return null;
+                }
+
+                foreach (WarehouseStockProductViewModel productInWarehouse in warehouseProducts.WarehouseProducts)
+                {
+                    if (String.IsNullOrEmpty(productInWarehouse.ImageUrl))
+                    {
+                        productInWarehouse.ImageUrl = $"/images/{NoImageUrl}";
+                    }
+                }
             }
 
             return warehouseProducts;
         }
-
 
         public async Task<IEnumerable<WarehouseDropDownModel>> GetAllWarehousesDropDownAsync()
         {

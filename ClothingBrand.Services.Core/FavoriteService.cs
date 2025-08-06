@@ -3,6 +3,7 @@ using ClothingBrand.Data.Repository.Interfaces;
 using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.EntityFrameworkCore;
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 namespace ClothingBrand.Services.Core
 {
@@ -31,6 +32,14 @@ namespace ClothingBrand.Services.Core
                     ImageUrl = aup.Product.ImageUrl
                 })
                 .ToListAsync();
+
+            foreach (ProductIndexViewModel product in favProducts)
+            {
+                if (String.IsNullOrEmpty(product.ImageUrl))
+                {
+                    product.ImageUrl = $"/images/{NoImageUrl}";
+                }
+            }
 
             return favProducts;
         }
@@ -85,7 +94,7 @@ namespace ClothingBrand.Services.Core
             return false;
         }
 
-        public async Task<bool> IsProductAddedToFavorites(Guid? productId, string userId)
+        public async Task<bool> IsProductAddedToFavorites(Guid? productId, string? userId)
         {
             if (productId != null && userId != null)
             {

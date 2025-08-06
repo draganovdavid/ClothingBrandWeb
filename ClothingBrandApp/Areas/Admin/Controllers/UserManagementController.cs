@@ -31,15 +31,13 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
                 await this.userService
                     .AssignUserToRoleAsync(inputModel);
                 TempData[SuccessMessageKey] = "User assigned to role successfully!";
-
-                return this.RedirectToAction(nameof(Index));
             }
             catch (Exception e)
             {
                 TempData[ErrorMessageKey] = e.Message;
-
-                return this.RedirectToAction(nameof(Index));
             }
+
+            return this.RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -57,16 +55,14 @@ namespace ClothingBrandApp.Web.Areas.Admin.Controllers
                 {
                     TempData[ErrorMessageKey] = "Could not remove role from user.";
                 }
-
-                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 TempData[ErrorMessageKey] = ex.Message;
-                return RedirectToAction(nameof(Index));
             }
-        }
 
+            return RedirectToAction(nameof(Index));
+        }
 
         [HttpPost]
         public async Task<IActionResult> DeleteUser(string userId)
