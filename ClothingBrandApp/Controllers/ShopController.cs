@@ -1,10 +1,9 @@
 ﻿using ClothingBrand.Services.Core.Interfaces;
 using ClothingBrandApp.Web.Controllers;
-using ClothingBrandApp.Web.ViewModels.Admin.ProductManagement;
 using ClothingBrandApp.Web.ViewModels.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using static ClothingBrandApp.Web.ViewModels.ValidationMessages.Product;
+using static ClothingBrandApp.GCommon.ApplicationConstants;
 
 namespace ClothingBrand.Web.Controllers
 {
@@ -61,7 +60,6 @@ namespace ClothingBrand.Web.Controllers
                 }
                 if (productDetails == null)
                 {
-                    // TODO: Custom 404 page
                     return this.RedirectToAction(nameof(Index));
                 }
 
@@ -69,9 +67,7 @@ namespace ClothingBrand.Web.Controllers
             }
             catch (Exception e)
             {
-                // TODO: Implement it with the ILogger
-                // TODO: Add JS bars to indicate such errors
-                Console.WriteLine(e.Message);
+                TempData["ErrorMessage"] = "An error occurred while trying to load the product details.";
 
                 return this.RedirectToAction(nameof(Index));
             }

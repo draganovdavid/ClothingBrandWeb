@@ -48,7 +48,7 @@ public class ShoppingCartController : BaseController
                     .AddProductToShoppingCartAsync(productId, userId);
             if (result == false)
             {
-                // TODO: Add JS notifications
+                TempData["ErrorMessage"] = "An error occurred while trying to add the product.";
                 return this.RedirectToAction(nameof(Index), "Shop");
             }
 
@@ -78,7 +78,7 @@ public class ShoppingCartController : BaseController
                 .DeleteProductFromShoppingCartAsync(productId, userId);
             if (result == false)
             {
-                // TODO: Add JS notifications
+                TempData["ErrorMessage"] = "An error occurred while trying to delete the product.";
                 return this.RedirectToAction(nameof(Index), "Home");
             }
 
